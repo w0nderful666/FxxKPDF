@@ -2,6 +2,13 @@
 
 免费开源、纯前端、本地处理的 PDF 工具箱。项目可部署到 GitHub Pages / Cloudflare Pages，不需要后端、数据库或账号系统。
 
+## 在线体验
+
+- 在线使用：[https://w0nderful666.github.io/FxxKPDF/](https://w0nderful666.github.io/FxxKPDF/)
+- GitHub 仓库：[https://github.com/w0nderful666/FxxKPDF](https://github.com/w0nderful666/FxxKPDF)
+
+如果刚刚启用 GitHub Pages，首次访问可能需要等待 1-3 分钟生效。
+
 ## 功能列表
 
 - PDF 合并、拆分 / 提取页面
