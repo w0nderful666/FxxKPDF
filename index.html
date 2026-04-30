@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PDF 小工坊 - PDF Toolkit Lite</title>
+    <meta name="description" content="免费开源的浏览器 PDF 工具箱，本地处理，不上传文件。" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="PDF 小工坊首页">
+        <span class="brand-mark">PDF</span>
+        <span>
+          <strong>PDF 小工坊</strong>
+          <small>本地处理，不上传文件</small>
+        </span>
+      </a>
+      <nav class="nav-actions">
+        <button class="ghost-btn" id="langBtn" type="button">中文</button>
+        <a class="ghost-btn" href="#" aria-label="GitHub 链接占位">GitHub</a>
+        <button class="ghost-btn mode-toggle" id="wideModeToggle" type="button">全宽</button>
+        <button class="ghost-btn mode-toggle" id="compactModeToggle" type="button">紧凑</button>
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="切换暗黑模式">
+          <span id="themeIcon">◐</span>
+        </button>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Privacy-first PDF Toolkit</p>
+          <h1>免费开源的浏览器 PDF 工具箱</h1>
+          <p class="hero-text">合并、拆分、排序、旋转、加水印、签名、图片转 PDF，全部在浏览器本地完成。</p>
+          <div class="pill-row" aria-label="核心卖点">
+            <span>无需上传</span>
+            <span>无需登录</span>
+            <span>GitHub Pages 可部署</span>
+          </div>
+        </div>
+        <div class="hero-panel" aria-label="隐私提示">
+          <div class="status-dot"></div>
+          <strong>所有文件只在你的浏览器里处理</strong>
+          <p>不会上传到服务器。刷新页面、关闭标签页或清空工作区后，已载入文件会被移除。</p>
+        </div>
+      </section>
+
+      <section class="notice">
+        <strong>隐私提示</strong>
+        <span>所有文件均在你的浏览器本地处理，不会上传到服务器。刷新页面后文件会被清空。</span>
+      </section>
+
+      <details class="explain-card">
+        <summary>为什么有些 PDF 能打开但不能编辑？</summary>
+        <div>
+          <p>PDF 可能设置了权限限制。某些文件允许查看和打印，但不允许编辑、注释、填写表单或签名。</p>
+          <p>本工具不会破解密码、移除权限或绕过保护。能打开查看，不代表一定能编辑。</p>
+          <p>本工具适合处理普通 PDF、自己创建的 PDF、扫描件、图片转 PDF、学习资料、简历、表格等你有权处理的文件。</p>
+        </div>
+      </details>
+
+      <section class="tools-section">
+        <div class="section-heading">
+          <p class="eyebrow">Tools</p>
+          <h2>选择一个工具开始</h2>
+        </div>
+        <div class="tool-grid" id="toolGrid"></div>
+      </section>
+
+      <section class="workspace" id="workspace">
+        <div class="workspace-head">
+          <div>
+            <p class="eyebrow">Workspace</p>
+            <h2 id="activeToolTitle">PDF 合并</h2>
+            <p id="activeToolDesc">上传多个 PDF，拖拽排序后合并为一个文件。</p>
+          </div>
+          <button class="ghost-btn" id="clearToolBtn" type="button">清空当前工具</button>
+        </div>
+
+        <div id="alerts" class="alerts" aria-live="polite"></div>
+
+        <section class="tool-panel active" id="panel-merge" data-tool="merge">
+          <div class="panel-grid">
+            <div class="control-card">
+              <h3>文件上传</h3>
+              <label class="dropzone">
+                <input id="mergeFiles" type="file" accept="application/pdf" multiple />
+                <span>拖入或选择多个 PDF</span>
+                <small>建议总大小不超过 200MB</small>
+              </label>
+              <ul class="file-list sortable" id="mergeList"></ul>
+              <div class="button-row">
+                <button class="primary-btn" id="mergeBtn" type="button">合并 PDF</button>
+                <button class="ghost-btn" data-clear="merge" type="button">清空</button>
+              </div>
+              <a class="download-btn hidden" id="mergeDownload" download="merged.pdf">下载合并后的 PDF</a>
+              <div class="result-card hidden" id="mergeResult"></div>
+            </div>
+            <div class="preview-card">
+              <h3>操作说明</h3>
+              <p>上传多个 PDF 后，可以拖拽文件列表调整顺序。合并会保留原始页面尺寸。</p>
+              <div class="empty-preview">合并工具不渲染整页预览，以减少大文件内存占用。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="panel-split" data-tool="split">
+          <div class="panel-grid">
+            <div class="control-card">
+              <h3>提取页面</h3>
+              <label class="dropzone">
+                <input id="splitFile" type="file" accept="application/pdf" />
+                <span>选择一个 PDF</span>
+                <small>支持 1-3、1,3,5、2-4,8,10</small>
+              </label>
+              <div class="file-meta" id="splitMeta"></div>
+              <label class="field">页码范围
+                <input id="splitRange" type="text" placeholder="例如：1-3,8,10" />
+                <small class="field-help" id="splitRangeHelp"></small>
+              </label>
+              <div class="button-row wrap compact-actions">
+                <button class="ghost-btn" data-split-preset="all" type="button">全部页面</button>
+                <button class="ghost-btn" data-split-preset="odd" type="button">奇数页</button>
+                <button class="ghost-btn" data-split-preset="even" type="button">偶数页</button>
+                <button class="ghost-btn" data-split-preset="first5" type="button">前 5 页</button>
+                <button class="ghost-btn" data-split-preset="last5" type="button">后 5 页</button>
+              </div>
+              <div class="mini-summary" id="splitSummary">上传 PDF 后可预览和选择页码。</div>
+              <div class="button-row">
+                <button class="primary-btn" id="splitBtn" type="button">生成新 PDF</button>
+                <button class="ghost-btn" data-clear="split" type="button">清空</button>
+              </div>
+              <a class="download-btn hidden" id="splitDownload" download="extracted.pdf">下载提取后的 PDF</a>
+              <div class="result-card hidden" id="splitResult"></div>
+            </div>
+            <div class="preview-card">
+              <h3>页面预览</h3>
+              <div class="thumb-size-toggle" data-target="splitPreview"><span>缩略图</span><button class="ghost-btn active" data-size="small" type="button">小</button><button class="ghost-btn" data-size="medium" type="button">中</button><button class="ghost-btn" data-size="large" type="button">大</button></div>
+              <div class="thumb-grid" id="splitPreview"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="panel-manage" data-tool="manage">
+          <div class="control-card full">
+            <h3>页面管理</h3>
+            <label class="dropzone compact">
+              <input id="manageFile" type="file" accept="application/pdf" />
+              <span>选择一个 PDF，预览前 100 页</span>
+            </label>
+            <div class="file-meta" id="manageMeta"></div>
+            <div class="mini-summary" id="manageSummary">上传 PDF 后可选择、排序、删除和旋转页面。</div>
+            <div class="button-row wrap">
+              <button class="ghost-btn" id="manageSelectAllBtn" type="button">全选</button>
+              <button class="ghost-btn" id="manageClearSelectBtn" type="button">取消选择</button>
+              <button class="ghost-btn" id="manageInvertBtn" type="button">反选</button>
+              <button class="ghost-btn" id="manageOddBtn" type="button">选择奇数页</button>
+              <button class="ghost-btn" id="manageEvenBtn" type="button">选择偶数页</button>
+              <button class="ghost-btn" id="manageDeleteBtn" type="button">删除选中</button>
+              <button class="ghost-btn" id="manageExtractBtn" type="button">提取选中</button>
+              <button class="ghost-btn" id="manageLeftBtn" type="button">左旋转</button>
+              <button class="ghost-btn" id="manageRightBtn" type="button">右旋转</button>
+              <button class="primary-btn" id="manageExportBtn" type="button">导出 PDF</button>
+              <button class="ghost-btn" data-clear="manage" type="button">清空</button>
+            </div>
+            <a class="download-btn hidden" id="manageDownload" download="managed.pdf">下载处理后的 PDF</a>
+            <div class="result-card hidden" id="manageResult"></div>
+            <div class="thumb-size-toggle" data-target="managePreview"><span>缩略图</span><button class="ghost-btn active" data-size="small" type="button">小</button><button class="ghost-btn" data-size="medium" type="button">中</button><button class="ghost-btn" data-size="large" type="button">大</button></div>
+            <div class="thumb-grid sortable pages" id="managePreview"></div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="panel-number" data-tool="number">
+          <div class="panel-grid">
+            <div class="control-card">
+              <h3>添加页码</h3>
+              <label class="dropzone">
+                <input id="numberFile" type="file" accept="application/pdf" />
+                <span>选择一个 PDF</span>
+              </label>
+              <div class="file-meta" id="numberMeta"></div>
+              <label class="field">位置
+                <select id="numberPosition">
+                  <option value="bottom-center">底部居中</option>
+                  <option value="bottom-right">底部右侧</option>
+                  <option value="bottom-left">底部左侧</option>
+                  <option value="top-center">顶部居中</option>
+                  <option value="top-right">顶部右侧</option>
+                  <option value="top-left">顶部左侧</option>
+                </select>
+              </label>
+              <label class="field">起始页码 <input id="numberStart" type="number" min="0" value="1" /></label>
+              <label class="field">字号 <input id="numberSize" type="number" min="8" max="72" value="12" /></label>
+              <label class="field">颜色 <input id="numberColor" type="color" value="#111827" /></label>
+              <label class="field">边距 <input id="numberMargin" type="number" min="0" max="160" value="28" /></label>
+              <label class="field">应用范围
+                <select id="numberScope">
+                  <option value="all">全部页面</option>
+                  <option value="custom">指定页码范围</option>
+                </select>
+              </label>
+              <label class="field hidden" id="numberRangeField">指定页码
+                <input id="numberRange" type="text" placeholder="例如：1-3,8,10" />
+                <small class="field-help" id="numberRangeHelp"></small>
+              </label>
+              <label class="field">格式
+                <select id="numberFormat">
+                  <option value="plain">1</option>
+                  <option value="page-en">Page 1</option>
+                  <option value="page-en-total">Page 1 of 10</option>
+                  <option value="cn">第 1 页</option>
+                  <option value="cn-total">第 1 / 10 页</option>
+                  <option value="total">1 / 总页数</option>
+                </select>
+              </label>
+              <div class="button-row">
+                <button class="primary-btn" id="numberBtn" type="button">生成 PDF</button>
+                <button class="ghost-btn" data-clear="number" type="button">清空</button>
+              </div>
+              <a class="download-btn hidden" id="numberDownload" download="page-numbers.pdf">下载新 PDF</a>
+              <div class="result-card hidden" id="numberResult"></div>
+            </div>
+            <div class="preview-card">
+              <h3>页面预览</h3>
+              <div class="large-preview" id="numberLargePreview"></div>
+              <div class="thumb-size-toggle" data-target="numberPreview"><span>缩略图</span><button class="ghost-btn active" data-size="small" type="button">小</button><button class="ghost-btn" data-size="medium" type="button">中</button><button class="ghost-btn" data-size="large" type="button">大</button></div>
+              <div class="thumb-grid" id="numberPreview"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="panel-textwatermark" data-tool="textwatermark">
+          <div class="panel-grid">
+            <div class="control-card">
+              <h3>文字水印</h3>
+              <label class="dropzone"><input id="textWatermarkFile" type="file" accept="application/pdf" /><span>选择一个 PDF</span></label>
+              <div class="file-meta" id="textWatermarkMeta"></div>
+              <label class="field">水印文字 <input id="watermarkText" type="text" value="内部资料" /></label>
+              <label class="field">字号 <input id="watermarkSize" type="number" value="42" min="12" max="160" /></label>
+              <label class="field">透明度 <input id="watermarkOpacity" type="range" min="0.05" max="0.8" value="0.18" step="0.01" /></label>
+              <label class="field">旋转角度 <input id="watermarkRotate" type="number" value="-30" min="-180" max="180" /></label>
+              <label class="field">颜色 <input id="watermarkColor" type="color" value="#64748b" /></label>
+              <label class="field">位置
+                <select id="watermarkPosition">
+                  <option value="center">居中</option>
+                  <option value="tile">平铺</option>
+                  <option value="top-left">左上</option>
+                  <option value="bottom-right">右下</option>
+                </select>
+              </label>
+              <label class="field">应用范围
+                <select id="watermarkScope"><option value="all">全部页面</option><option value="custom">指定页码范围</option></select>
+              </label>
+              <label class="field hidden" id="watermarkRangeField">指定页码
+                <input id="watermarkRange" type="text" placeholder="例如：1-3,8,10" />
+                <small class="field-help" id="watermarkRangeHelp"></small>
+              </label>
+              <div class="mini-summary" id="watermarkSummary"></div>
+              <div class="button-row"><button class="primary-btn" id="textWatermarkBtn" type="button">添加水印</button><button class="ghost-btn" data-clear="textwatermark" type="button">清空</button></div>
+              <a class="download-btn hidden" id="textWatermarkDownload" download="text-watermark.pdf">下载新 PDF</a>
+              <div class="result-card hidden" id="textWatermarkResult"></div>
+            </div>
+            <div class="preview-card">
+              <h3>页面预览</h3>
+              <div class="large-preview" id="textWatermarkLargePreview"></div>
+              <div class="thumb-size-toggle" data-target="textWatermarkPreview"><span>缩略图</span><button class="ghost-btn active" data-size="small" type="button">小</button><button class="ghost-btn" data-size="medium" type="button">中</button><button class="ghost-btn" data-size="large" type="button">大</button></div>
+              <div class="thumb-grid" id="textWatermarkPreview"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="panel-imagewatermark" data-tool="imagewatermark">
+          <div class="panel-grid">
+            <div class="control-card">
+              <h3>图片水印</h3>
+              <label class="dropzone"><input id="imageWatermarkPdf" type="file" accept="application/pdf" /><span>选择一个 PDF</span></label>
+              <label class="dropzone"><input id="imageWatermarkImage" type="file" accept="image/png,image/jpeg" /><span>选择 PNG / JPG 水印图片</span></label>
+              <div class="file-meta" id="imageWatermarkMeta"></div>
+              <label class="field">透明度 <input id="imageWatermarkOpacity" type="range" min="0.05" max="1" value="0.25" step="0.01" /></label>
+              <label class="field">宽度占页面比例 <input id="imageWatermarkScale" type="range" min="0.1" max="0.9" value="0.35" step="0.01" /><small id="imageWatermarkScaleValue">35%</small></label>
+              <label class="field">旋转角度 <input id="imageWatermarkRotate" type="number" value="0" min="-180" max="180" /></label>
+              <label class="field">位置
+                <select id="imageWatermarkPosition"><option value="center">居中</option><option value="top-left">左上</option><option value="bottom-right">右下</option></select>
+              </label>
+              <label class="field">应用范围
+                <select id="imageWatermarkScope"><option value="all">全部页面</option><option value="custom">指定页码范围</option></select>
+              </label>
+              <label class="field hidden" id="imageWatermarkRangeField">指定页码
+                <input id="imageWatermarkRange" type="text" placeholder="例如：1-3,8,10" />
+                <small class="field-help" id="imageWatermarkRangeHelp"></small>
+              </label>
+              <div class="mini-summary" id="imageWatermarkSummary"></div>
+              <div class="button-row"><button class="primary-btn" id="imageWatermarkBtn" type="button">添加图片水印</button><button class="ghost-btn" data-clear="imagewatermark" type="button">清空</button></div>
+              <a class="download-btn hidden" id="imageWatermarkDownload" download="image-watermark.pdf">下载新 PDF</a>
+              <div class="result-card hidden" id="imageWatermarkResult"></div>
+            </div>
+            <div class="preview-card">
+              <h3>页面预览</h3>
+              <div class="large-preview" id="imageWatermarkLargePreview"></div>
+              <div class="thumb-size-toggle" data-target="imageWatermarkPreview"><span>缩略图</span><button class="ghost-btn active" data-size="small" type="button">小</button><button class="ghost-btn" data-size="medium" type="button">中</button><button class="ghost-btn" data-size="large" type="button">大</button></div>
+              <div class="thumb-grid" id="imageWatermarkPreview"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="panel-signature" data-tool="signature">
+          <div class="panel-grid">
+            <div class="control-card">
+              <h3>签名 / 盖章</h3>
+              <label class="dropzone"><input id="signaturePdf" type="file" accept="application/pdf" /><span>选择一个 PDF</span></label>
+              <label class="dropzone"><input id="signatureImage" type="file" accept="image/png,image/jpeg" /><span>上传签名图片，或在下方手写</span></label>
+              <div class="file-meta" id="signatureMeta"></div>
+              <canvas id="signaturePad" width="520" height="180" class="signature-pad"></canvas>
+              <div class="button-row"><button class="ghost-btn" id="signatureClearPad" type="button">清空手写</button></div>
+              <div class="form-grid">
+                <label class="field">页码 <input id="signaturePage" type="number" value="1" min="1" /></label>
+                <label class="field">X <input id="signatureX" type="number" value="80" /></label>
+                <label class="field">Y <input id="signatureY" type="number" value="80" /></label>
+                <label class="field">宽度 <input id="signatureWidth" type="number" value="160" min="20" /></label>
+              </div>
+              <label class="field">签名宽度 <input id="signatureWidthRange" type="range" min="40" max="360" value="160" /></label>
+              <div class="button-row"><button class="primary-btn" id="signatureBtn" type="button">添加签名</button><button class="ghost-btn" data-clear="signature" type="button">清空</button></div>
+              <a class="download-btn hidden" id="signatureDownload" download="signed.pdf">下载新 PDF</a>
+              <div class="result-card hidden" id="signatureResult"></div>
+            </div>
+            <div class="preview-card">
+              <h3>页面预览</h3>
+              <p>你可以直接点击大预览放置签名，也可以手动输入坐标精确调整。</p>
+              <div class="large-preview placement-large" id="signatureLargePreview"></div>
+              <div class="thumb-size-toggle" data-target="signaturePreview"><span>缩略图</span><button class="ghost-btn active" data-size="small" type="button">小</button><button class="ghost-btn" data-size="medium" type="button">中</button><button class="ghost-btn" data-size="large" type="button">大</button></div>
+              <div class="thumb-grid placement-grid" id="signaturePreview"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="panel-annotate" data-tool="annotate">
+          <div class="panel-grid">
+            <div class="control-card">
+              <h3>添加文字 / 形状 / 图片</h3>
+              <label class="dropzone"><input id="annotatePdf" type="file" accept="application/pdf" /><span>选择一个 PDF</span></label>
+              <label class="dropzone"><input id="annotateImage" type="file" accept="image/png,image/jpeg" /><span>可选：选择要添加的图片</span></label>
+              <div class="file-meta" id="annotateMeta"></div>
+              <label class="field">类型
+                <select id="annotateType"><option value="text">普通文字</option><option value="rect">矩形</option><option value="circle">圆形</option><option value="line">线条</option><option value="image">图片</option></select>
+              </label>
+              <label class="field">文字 <input id="annotateText" type="text" value="备注" /></label>
+              <div class="form-grid">
+                <label class="field">页码 <input id="annotatePage" type="number" min="1" value="1" /></label>
+                <label class="field">X <input id="annotateX" type="number" value="80" /></label>
+                <label class="field">Y <input id="annotateY" type="number" value="80" /></label>
+                <label class="field">宽 <input id="annotateW" type="number" value="180" /></label>
+                <label class="field">高 <input id="annotateH" type="number" value="60" /></label>
+                <label class="field">字号 <input id="annotateSize" type="number" value="24" /></label>
+              </div>
+              <label class="field">颜色 <input id="annotateColor" type="color" value="#2563eb" /></label>
+              <div class="button-row"><button class="primary-btn" id="annotateBtn" type="button">添加并导出</button><button class="ghost-btn" data-clear="annotate" type="button">清空</button></div>
+              <a class="download-btn hidden" id="annotateDownload" download="annotated.pdf">下载新 PDF</a>
+              <div class="result-card hidden" id="annotateResult"></div>
+            </div>
+            <div class="preview-card">
+              <h3>页面预览</h3>
+              <p>选择页码后点击大预览即可放置标注，数字输入可用于微调。</p>
+              <div class="large-preview placement-large" id="annotateLargePreview"></div>
+              <div class="thumb-size-toggle" data-target="annotatePreview"><span>缩略图</span><button class="ghost-btn active" data-size="small" type="button">小</button><button class="ghost-btn" data-size="medium" type="button">中</button><button class="ghost-btn" data-size="large" type="button">大</button></div>
+              <div class="thumb-grid placement-grid" id="annotatePreview"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="panel-permissions" data-tool="permissions">
+          <div class="panel-grid">
+            <div class="control-card">
+              <h3>PDF 权限检测</h3>
+              <label class="dropzone">
+                <input id="permissionFile" type="file" accept="application/pdf" />
+                <span>选择一个 PDF</span>
+                <small>只检测和解释，不会修改文件</small>
+              </label>
+              <div class="file-meta" id="permissionMeta"></div>
+              <div class="button-row">
+                <button class="primary-btn" id="permissionBtn" type="button">检测权限</button>
+                <button class="ghost-btn" data-clear="permissions" type="button">清空</button>
+              </div>
+              <div class="result-card hidden" id="permissionsResult"></div>
+            </div>
+            <div class="preview-card">
+              <h3>为什么有些 PDF 能打开但不能编辑？</h3>
+              <p>能打开查看不代表一定能编辑。PDF 可能允许查看和打印，但限制修改、复制、注释、填写表单、签名或页面提取。</p>
+              <p>某些 PDF 可能包含数字签名，修改后可能导致签名失效。本工具不会处理 DRM、企业权限、在线授权或指定阅读器限制。</p>
+              <div class="empty-preview" id="permissionPreviewNote">上传 PDF 后会显示页数、预览状态和权限状态。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="panel-normalcopy" data-tool="normalcopy">
+          <div class="panel-grid">
+            <div class="control-card">
+              <h3>生成普通副本</h3>
+              <label class="dropzone">
+                <input id="normalCopyFile" type="file" accept="application/pdf" />
+                <span>选择你有权处理的 PDF</span>
+                <small>可尝试重新保存为普通 PDF</small>
+              </label>
+              <div class="file-meta" id="normalCopyMeta"></div>
+              <label class="field">已知打开密码（可选）
+                <input id="normalCopyPassword" type="password" autocomplete="off" placeholder="请输入你已知的 PDF 打开密码" />
+                <small class="field-help">密码只在本页内使用，刷新后清空。</small>
+              </label>
+              <label class="check-field"><input id="normalCopyConsent" type="checkbox" /> 我确认这是我拥有权利或已获得授权处理的 PDF 文件。</label>
+              <div class="button-row wrap">
+                <button class="primary-btn" id="normalCopyBtn" type="button">生成普通副本</button>
+                <button class="ghost-btn" id="rebuildCopyBtn" type="button">图片化重建副本</button>
+                <button class="ghost-btn" data-clear="normalcopy" type="button">清空</button>
+              </div>
+              <div class="mini-summary">图片化重建会让文字不可选择，文件可能变大，仅适用于你有权处理但结构异常的文件。</div>
+              <a class="download-btn hidden" id="normalCopyDownload" download="normal-copy.pdf">下载普通副本</a>
+              <div class="result-card hidden" id="normalcopyResult"></div>
+            </div>
+            <div class="preview-card">
+              <h3>重建选项</h3>
+              <label class="field">页码范围 <input id="rebuildRange" type="text" placeholder="例如：1-3,8,10；留空表示全部" /></label>
+              <label class="field">清晰度
+                <select id="rebuildQuality">
+                  <option value="1.5">标准（约 150 DPI）</option>
+                  <option value="2.5">高清（约 220 DPI）</option>
+                  <option value="3.5">打印级（约 300 DPI，较慢）</option>
+                </select>
+              </label>
+              <label class="field">输出格式
+                <select id="rebuildFormat"><option value="jpeg">JPEG，文件更小</option><option value="png">PNG，文字边缘更清晰</option></select>
+              </label>
+              <label class="field">JPEG 质量
+                <select id="rebuildJpegQuality"><option value="0.85">0.85</option><option value="0.92" selected>0.92</option><option value="0.96">0.96</option></select>
+              </label>
+              <div class="empty-preview" id="normalCopyStatus">QPDF WebAssembly 可用于合法密码处理和权限修复；如果模块加载失败会自动提示并保留图片化重建兜底方案。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="panel-protect" data-tool="protect">
+          <div class="panel-grid">
+            <div class="control-card">
+              <h3>PDF 加密码</h3>
+              <label class="dropzone">
+                <input id="protectFile" type="file" accept="application/pdf" />
+                <span>选择普通 PDF</span>
+                <small>使用 QPDF WebAssembly 生成加密 PDF</small>
+              </label>
+              <div class="file-meta" id="protectMeta"></div>
+              <label class="field">打开密码 <input id="protectUserPassword" type="password" autocomplete="off" /></label>
+              <label class="field">确认打开密码 <input id="protectConfirmPassword" type="password" autocomplete="off" /></label>
+              <label class="field">权限密码（可选） <input id="protectOwnerPassword" type="password" autocomplete="off" /></label>
+              <div class="mini-summary" id="passwordStrength">密码强度：未填写</div>
+              <div class="permission-grid">
+                <label><input id="permPrint" type="checkbox" checked /> 允许打印</label>
+                <label><input id="permCopy" type="checkbox" checked /> 允许复制文本</label>
+                <label><input id="permModify" type="checkbox" /> 允许修改内容</label>
+                <label><input id="permAnnotate" type="checkbox" /> 允许注释</label>
+                <label><input id="permForms" type="checkbox" /> 允许填写表单</label>
+                <label><input id="permExtract" type="checkbox" checked /> 允许页面提取</label>
+              </div>
+              <label class="check-field"><input id="protectConsent" type="checkbox" /> 我确认这是我拥有权利或已获得授权处理的 PDF 文件。</label>
+              <div class="mini-summary">请妥善保存密码。忘记打开密码后，本工具不会帮你破解。</div>
+              <div class="button-row">
+                <button class="primary-btn" id="protectBtn" type="button">生成加密 PDF</button>
+                <button class="ghost-btn" data-clear="protect" type="button">清空</button>
+              </div>
+              <a class="download-btn hidden" id="protectDownload" download="protected.pdf">下载加密 PDF</a>
+              <div class="result-card hidden" id="protectResult"></div>
+            </div>
+            <div class="preview-card">
+              <h3>本地加密说明</h3>
+              <p>PDF 加密码依赖 QPDF WebAssembly。文件和密码只在浏览器本地处理，不会上传，也不会保存。</p>
+              <div class="empty-preview">当前环境如果无法加载 qpdf-wasm，会提示按 README 部署或重新 vendor QPDF 模块。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="panel-metadata" data-tool="metadata">
+          <div class="panel-grid">
+            <div class="control-card">
+              <h3>PDF 元数据清理</h3>
+              <label class="dropzone">
+                <input id="metadataFile" type="file" accept="application/pdf" />
+                <span>选择一个 PDF</span>
+                <small>只处理文件内部元数据，不遮盖页面内容</small>
+              </label>
+              <div class="file-meta" id="metadataMeta"></div>
+              <label class="field">随机策略
+                <select id="metadataRandomStrategy">
+                  <option value="minimal">极简随机</option>
+                  <option value="general">普通文档</option>
+                  <option value="study">学习资料</option>
+                  <option value="work">工作文档</option>
+                </select>
+              </label>
+              <label class="check-field"><input id="metadataDeepRewrite" type="checkbox" /> 使用 QPDF 深度重写 PDF（实验性）</label>
+              <div class="button-row wrap">
+                <button class="primary-btn" id="metadataClearBtn" type="button">一键清空元数据</button>
+                <button class="ghost-btn" id="metadataRandomBtn" type="button">一键随机替换</button>
+                <button class="ghost-btn" data-clear="metadata" type="button">清空</button>
+              </div>
+              <div class="mini-summary">本工具清理的是 PDF 文件内部元数据，例如标题、作者、关键词、创建工具、创建时间等。它不能修改 Windows / macOS 文件系统里的创建时间、访问时间、文件路径等操作系统属性。</div>
+              <a class="download-btn hidden" id="metadataDownload" download="metadata-cleaned.pdf">下载处理后的 PDF</a>
+              <div class="result-card hidden" id="metadataResult"></div>
+            </div>
+            <div class="preview-card">
+              <h3>当前元数据</h3>
+              <div id="metadataInfo" class="empty-preview">上传 PDF 后显示文件属性和可能的隐藏信息迹象。</div>
+              <h3>自定义写入</h3>
+              <div class="form-grid">
+                <label class="field">标题 <input id="metadataTitle" type="text" /></label>
+                <label class="field">作者 <input id="metadataAuthor" type="text" /></label>
+                <label class="field">主题 <input id="metadataSubject" type="text" /></label>
+                <label class="field">关键词 <input id="metadataKeywords" type="text" placeholder="用逗号分隔" /></label>
+                <label class="field">创建者 <input id="metadataCreator" type="text" /></label>
+                <label class="field">生产者 <input id="metadataProducer" type="text" /></label>
+              </div>
+              <div class="button-row">
+                <button class="primary-btn" id="metadataCustomBtn" type="button">应用自定义信息</button>
+              </div>
+              <div class="mini-summary">如果 PDF 包含数字签名，修改元数据可能导致签名失效。复杂 XMP、附件、JavaScript 或私有对象不保证 100% 清除。</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-panel" id="panel-imagepdf" data-tool="imagepdf">
+          <div class="panel-grid">
+            <div class="control-card">
+              <h3>JPG / PNG 转 PDF</h3>
+              <label class="dropzone">
+                <input id="imagePdfFiles" type="file" accept="image/png,image/jpeg" multiple />
+                <span>选择多张 JPG / PNG</span>
+                <small>支持拖拽排序</small>
+              </label>
+              <label class="field">页面尺寸
+                <select id="imagePdfPageSize"><option value="auto">自动适应图片</option><option value="a4p">A4 纵向</option><option value="a4l">A4 横向</option></select>
+              </label>
+              <label class="field">边距
+                <select id="imagePdfMargin"><option value="0">无边距</option><option value="24">小边距</option><option value="48">中边距</option></select>
+              </label>
+              <label class="field">页面适配
+                <select id="imagePdfFit"><option value="contain">等比完整显示</option><option value="cover">等比铺满裁切</option></select>
+              </label>
+              <label class="field">图片背景
+                <select id="imagePdfBg"><option value="white">白色</option><option value="black">黑色</option><option value="transparent-white">透明转白色</option></select>
+              </label>
+              <ul class="file-list sortable" id="imagePdfList"></ul>
+              <div class="button-row"><button class="primary-btn" id="imagePdfBtn" type="button">生成 PDF</button><button class="ghost-btn" data-clear="imagepdf" type="button">清空</button></div>
+              <a class="download-btn hidden" id="imagePdfDownload" download="images.pdf">下载生成的 PDF</a>
+              <div class="result-card hidden" id="imagePdfResult"></div>
+            </div>
+            <div class="preview-card"><h3>图片缩略图</h3><div class="image-preview-grid" id="imagePdfPreview"></div></div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p><strong>PDF 小工坊</strong> 是免费开源的纯前端 PDF 工具箱。</p>
+      <p>隐私说明：文件仅在本地浏览器处理，不上传服务器。免责声明：请仅处理你拥有权利或获得授权的 PDF 文件。</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    <script src="./qpdf-utils.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

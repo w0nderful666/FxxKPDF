@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "vendor:qpdf": "node scripts/vendor-qpdf.mjs"
+  },
+  "devDependencies": {
+    "qpdf-wasm-esm-embedded": "1.1.1"
+  }
+}
