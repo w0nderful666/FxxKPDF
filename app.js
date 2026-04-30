@@ -1,7 +1,7 @@
 /* global PDFLib, pdfjsLib, Sortable */
 const { PDFDocument, degrees, rgb } = PDFLib;
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+pdfjsLib.GlobalWorkerOptions.workerSrc = "./libs/pdfjs/pdf.worker.min.js";
 
 const tools = [
   ["merge", "PDF 合并", "上传多个 PDF，拖拽排序后一键合并。"],
@@ -49,18 +49,18 @@ function escapeHTML(value) {
     .replaceAll("'", "&#39;");
 }
 
-function sanitizeFilenamePart(value) {
-  return String(value || "document")
-    .replace(/\.[a-z0-9]{1,8}$/i, "")
-    .replace(/[\\/:*?"<>|]+/g, "-")
-    .replace(/\s+/g, " ")
+function sanitizeFileName(name) {
+  return String(name || "document")
+    .replace(/[\\/:*?"<>|]/g, "_")
+    .replace(/[\u0000-\u001f]/g, "")
     .trim()
-    .slice(0, 96) || "document";
+    .slice(0, 80) || "document";
 }
 
 function buildOutputName(fileOrName, suffix) {
-  const name = typeof fileOrName === "string" ? fileOrName : fileOrName?.name;
-  return `${sanitizeFilenamePart(name)}-${suffix}.pdf`;
+  const raw = typeof fileOrName === "string" ? fileOrName : fileOrName?.name || "document.pdf";
+  const clean = sanitizeFileName(raw.replace(/\.pdf$/i, ""));
+  return `${clean}-${suffix}.pdf`;
 }
 
 function showAlert(message, type = "success") {
@@ -121,7 +121,7 @@ async function loadPdfLib(file) {
 
 function makeDownload(anchor, bytes, filename) {
   const safeFilename = filename.toLowerCase().endsWith(".pdf")
-    ? `${sanitizeFilenamePart(filename)}.pdf`
+    ? `${sanitizeFileName(filename.replace(/\.pdf$/i, ""))}.pdf`
     : buildOutputName(filename, "output");
   if (anchor.dataset.url) URL.revokeObjectURL(anchor.dataset.url);
   const blob = new Blob([bytes], { type: "application/pdf" });

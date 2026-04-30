@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' blob: data:; worker-src 'self' blob:; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self';" />
     <title>PDF 小工坊 - PDF Toolkit Lite</title>
     <meta name="description" content="免费开源的浏览器 PDF 工具箱，本地处理，不上传文件。" />
     <link rel="stylesheet" href="./styles.css" />
@@ -562,9 +563,9 @@
       <p>隐私说明：文件仅在本地浏览器处理，不上传服务器。免责声明：请仅处理你拥有权利或获得授权的 PDF 文件。</p>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    <script src="./libs/pdf-lib/pdf-lib.min.js"></script>
+    <script src="./libs/pdfjs/pdf.min.js"></script>
+    <script src="./libs/sortable/Sortable.min.js"></script>
     <script src="./qpdf-utils.js"></script>
     <script src="./app.js"></script>
   </body>

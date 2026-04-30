@@ -1,13 +1,30 @@
 # PDF 小工坊 / PDF Toolkit Lite
 
-免费开源、纯前端、本地处理的 PDF 工具箱。项目可部署到 GitHub Pages / Cloudflare Pages，不需要后端、数据库或账号系统。
+免费开源、纯前端、本地处理的 PDF 工具箱。项目没有后端、数据库、账号系统或云上传接口，适合部署到 GitHub Pages / Cloudflare Pages。
 
 ## 在线体验
 
 - 在线使用：[https://w0nderful666.github.io/FxxKPDF/](https://w0nderful666.github.io/FxxKPDF/)
 - GitHub 仓库：[https://github.com/w0nderful666/FxxKPDF](https://github.com/w0nderful666/FxxKPDF)
 
-如果刚刚启用 GitHub Pages，首次访问可能需要等待 1-3 分钟生效。
+如果刚刚启用 GitHub Pages，首次访问可能需要等待 1-3 分钟。
+
+## 文件会上传吗？
+
+不会。PDF、图片和密码只在当前浏览器标签页内处理。
+
+- 本项目没有后端、没有数据库、没有上传接口。
+- GitHub Pages / Cloudflare Pages 只负责提供静态网页文件。
+- 关闭页面或刷新后，已载入的文件会从当前页面状态中清空。
+- 其他用户无法从本站服务器读取你的文件，因为文件没有被上传到服务器。
+- 你也可以 Fork 本项目并部署到自己的 GitHub Pages，处理敏感文件更安心。
+
+仍需注意：
+
+- 不要使用不可信的镜像站。
+- 不要在装有可疑浏览器扩展的环境中处理敏感文件。
+- 极敏感文件建议 fork 后自部署，或下载源码后在可信环境中离线使用。
+- 浏览器崩溃、恶意扩展、本机木马、系统剪贴板监听等不属于本站能完全控制的范围。
 
 ## 功能列表
 
@@ -18,90 +35,56 @@
 - JPG / PNG 转 PDF
 - PDF 权限检测、生成普通副本、PDF 加密码
 - PDF 元数据清理 / 文件属性脱敏
+- 图片化重建副本，支持标准、高清、打印级
 - 暗黑模式、全宽模式、紧凑模式、拖拽上传
 
-## QPDF WebAssembly
+## 本地依赖
 
-当前版本已 vendor `qpdf-wasm-esm-embedded@1.1.1`：
+第三方依赖已 vendor 到 `libs/`，页面不再从 CDN 加载核心库：
 
 ```text
-libs/qpdf/qpdf.mjs
+libs/
+  pdf-lib/pdf-lib.min.js                 pdf-lib 1.17.1
+  pdfjs/pdf.min.js                       PDF.js 3.11.174
+  pdfjs/pdf.worker.min.js                PDF.js worker 3.11.174
+  sortable/Sortable.min.js               SortableJS 1.15.2
+  qpdf/qpdf.mjs                          qpdf-wasm-esm-embedded 1.1.1
 ```
 
-这是内嵌 WASM 的 ESM 单文件，不需要额外 `.wasm` 文件。重新生成 vendor 文件：
+重新生成本地依赖：
 
 ```bash
 npm install
+npm run vendor
+```
+
+也可以单独执行：
+
+```bash
+npm run vendor:libs
 npm run vendor:qpdf
 ```
 
-运行时不需要提交 `node_modules`，但需要提交 `libs/qpdf/qpdf.mjs`。
+运行和部署时不需要提交 `node_modules`，但必须提交 `libs/` 下的静态文件。
 
-## V1.2 大预览
+## QPDF WebAssembly
 
-新增可复用单页大预览组件，每次只渲染当前页，支持翻页、页码跳转、缩放和适应宽度。签名、标注、水印、页码工具已接入大预览层。
+QPDF 高级模块用于：
 
-## V1.3 PDF 权限检测
+- 生成普通副本 / 权限修复
+- 用户提供正确打开密码后的合法处理
+- PDF 加密码 / 权限设置
+- 元数据清理中的实验性深度重写
 
-使用 PDF.js 检测页数、预览状态和权限状态。QPDF 可用时额外显示 QPDF 检测结果，包括加密状态、是否需要打开密码、owner permission 限制和是否可生成普通副本。
+QPDF 使用稳定 URL 加载：
 
-## V1.4 生成普通副本 / 权限修复
-
-优先调用 QPDF：
-
-```text
-qpdf --password=<已知打开密码或空字符串> --decrypt input.pdf output.pdf
+```js
+new URL("./libs/qpdf/qpdf.mjs", document.baseURI).href
 ```
 
-适用于用户自己拥有权利的 owner permission 限制 PDF，以及用户已知打开密码的 PDF。不破解未知密码、不爆破密码、不绕过 DRM 或企业权限系统。
+基础 PDF 功能不依赖 QPDF。即使 QPDF 加载失败，合并、拆分、水印、签名、标注、图片转 PDF 等普通功能仍可使用。
 
-## V1.5 PDF 加密码
-
-依赖 QPDF，支持打开密码、可选权限密码，以及打印、复制、修改、注释、填写表单、页面提取等基础权限设置。项目不会使用 pdf-lib 假装加密。
-
-## V1.6 PDF 元数据清理
-
-新增“PDF 元数据清理”工具，用于查看、清空、随机替换或自定义写入 PDF 内部元数据。
-
-支持查看：
-
-- 标题 Title
-- 作者 Author
-- 主题 Subject
-- 关键词 Keywords
-- 创建者 Creator
-- 生产者 Producer
-- 创建时间 CreationDate
-- 修改时间 ModDate
-- 是否可能包含 XMP Metadata、数字签名、注释、表单、附件、JavaScript
-
-支持处理：
-
-- 一键清空元数据
-- 一键随机替换，包含极简随机、普通文档、学习资料、工作文档策略
-- 自定义写入标题、作者、主题、关键词、创建者、生产者
-- 可选 QPDF 深度重写 PDF，实验性尝试移除旧对象残留和未引用对象
-
-边界说明：
-
-- 本工具处理 PDF 文件内部元数据，不遮盖页面内容。
-- 浏览器无法可靠修改 Windows / macOS 文件系统属性，例如文件创建时间、访问时间、文件路径。
-- 不保证 100% 清除所有私有隐藏信息。复杂 XMP、附件、JavaScript、私有对象可能仍需专业审计。
-- 如果 PDF 包含数字签名，修改元数据可能导致签名失效。
-- 所有处理都在浏览器本地完成，不上传服务器。
-
-## 图片化重建副本
-
-图片化重建使用 PDF.js 渲染页面，再用 pdf-lib 生成扫描版 PDF。它是兜底方案，不是权限修复。重建后文字不可复制，文件可能变大，质量取决于清晰度设置。
-
-## 隐私说明
-
-- 文件只在浏览器本地处理
-- 不上传服务器
-- 密码不保存
-- 刷新页面后文件和密码会清空
-
-## 本地运行
+如果直接用 `file://` 打开页面，QPDF 可能无法加载。建议使用本地静态服务：
 
 ```bash
 python -m http.server 8080
@@ -113,122 +96,104 @@ python -m http.server 8080
 http://localhost:8080
 ```
 
-## GitHub Pages / Cloudflare Pages
+GitHub Pages / Cloudflare Pages 通过 HTTP/HTTPS 访问，可正常加载 QPDF。
 
-GitHub Pages：提交项目根目录文件和 `libs/qpdf/qpdf.mjs`，在 `Settings -> Pages` 中选择发布分支和根目录。
+## 隐私和安全设计
 
-Cloudflare Pages：构建命令可留空，输出目录使用项目根目录。如果要重新 vendor QPDF，可使用：
+- 文件只存在于当前浏览器页面的内存 / Blob URL 中。
+- 密码不写入 localStorage、sessionStorage、URL 或 console。
+- 文件名、PDF 元数据、错误文本、用户输入都会转义后展示。
+- 下载文件名会清理非法字符。
+- 项目已加入兼容 WebAssembly 的 CSP meta。
+- CSP 是第二层防护，不能替代代码层面的转义。
 
-```bash
-npm install && npm run vendor:qpdf
-```
-
-发布前请确认 `libs/qpdf/qpdf.mjs` 已提交；不需要提交 `node_modules`。如果直接用 `file://` 打开页面，基础 PDF 功能通常可用，但 QPDF 模块需要 HTTP 静态服务或 GitHub Pages。
-
-推荐部署安全头：
+当前 `index.html` 使用的 CSP meta：
 
 ```text
-Content-Security-Policy:
-  default-src 'self';
-  object-src 'none';
-  base-uri 'self';
-  img-src 'self' blob: data:;
-  worker-src 'self' blob: https://cdn.jsdelivr.net;
-  script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval';
-  style-src 'self' 'unsafe-inline';
+default-src 'self';
+base-uri 'self';
+object-src 'none';
+img-src 'self' blob: data:;
+worker-src 'self' blob:;
+script-src 'self' 'wasm-unsafe-eval';
+style-src 'self' 'unsafe-inline';
+connect-src 'self';
 ```
 
-如果实际部署中 PDF.js CDN worker 或 QPDF WASM 被 CSP 阻止，请先以可用性为准调整策略，再逐步收紧。
+如果部署到 Cloudflare Pages，可以在响应头中配置更完整的安全策略。GitHub Pages 的 `github.io` 域名默认支持 HTTPS。敏感文件建议使用自己可信的部署地址。
 
-## 安全说明
+## 如何验证文件没有上传？
 
-- 文件只在浏览器本地处理，不上传服务器。
-- 密码不保存，不写入 localStorage、URL 或日志。
-- 建议部署方使用 HTTPS。
-- 建议锁定依赖版本。
-- 后续可把 pdf-lib、PDF.js、SortableJS 从 CDN vendor 到本地，降低供应链风险。
-- 页面会转义文件名、PDF 元数据和错误文本，避免恶意文件名或恶意元数据注入脚本。
+1. 打开浏览器开发者工具。
+2. 进入 Network 面板。
+3. 勾选 Preserve log。
+4. 上传 PDF 并执行处理。
+5. 正常情况下只能看到静态资源请求，例如 HTML、JS、CSS、PDF worker、QPDF mjs。
+6. 不应出现包含 PDF 文件内容的 POST / PUT / upload 请求。
+7. 下载结果通常是 `blob:` 本地对象 URL。
 
-## 技术栈
+## PDF 权限和密码边界
 
-- HTML
-- CSS
-- JavaScript
-- pdf-lib 1.17.1
-- PDF.js 3.11.174
-- SortableJS 1.15.2
-- qpdf-wasm-esm-embedded 1.1.1
+项目不会：
 
-## 已知限制
+- 破解未知打开密码
+- 爆破密码
+- 绕过 DRM
+- 绕过企业权限系统、在线授权系统或指定阅读器限制
 
-- 不破解未知打开密码
-- 不爆破密码
-- 不绕过 DRM
-- 不绕过企业权限系统、在线授权系统或指定阅读器授权
-- 数字签名 PDF 修改后可能导致签名失效
-- 图片化重建会让文字不可复制
-- 元数据清理不修改操作系统文件属性
-- 元数据清理不保证 100% 删除所有私有隐藏信息
-- 大文件处理速度取决于设备性能
+权限相关能力只用于你拥有权利或已获得授权的 PDF。处理前页面会要求勾选确认。
+
+## PDF 元数据清理边界
+
+“PDF 元数据清理”处理的是 PDF 内部元数据，例如标题、作者、关键词、创建工具、创建时间等。
+
+它不能修改 Windows / macOS 文件系统中的创建时间、访问时间、文件路径等操作系统属性。复杂 XMP、附件、JavaScript、私有对象可能需要专业审计；本工具不承诺 100% 清除所有隐藏信息。如果 PDF 包含数字签名，修改元数据可能导致签名失效。
+
+## GitHub Pages 部署
+
+1. 确认 `libs/qpdf/qpdf.mjs`、`libs/pdf-lib/pdf-lib.min.js`、`libs/pdfjs/pdf.min.js`、`libs/pdfjs/pdf.worker.min.js`、`libs/sortable/Sortable.min.js` 已提交。
+2. 推送到 GitHub。
+3. 进入仓库 `Settings -> Pages`。
+4. Source 选择 `Deploy from a branch`。
+5. Branch 选择 `main`，Folder 选择 `/root`。
+6. 保存后等待 1-3 分钟。
+
+Cloudflare Pages 可直接以项目根目录作为输出目录；构建命令可留空。如果你希望每次构建重新 vendor 依赖，可使用：
+
+```bash
+npm install && npm run vendor
+```
+
+## 发布前安全清单
+
+- [ ] 所有依赖已本地 vendor，或明确锁定版本。
+- [ ] `libs/qpdf/qpdf.mjs` 已提交。
+- [ ] `libs/pdf-lib/`、`libs/pdfjs/`、`libs/sortable/` 已提交。
+- [ ] GitHub Pages 使用 HTTPS。
+- [ ] 文件名、元数据、用户输入不直接插入未转义 HTML。
+- [ ] 恶意文件名测试通过：`<img src=x onerror=alert(1)>.pdf`
+- [ ] 恶意 PDF 元数据测试通过：`Title = <script>alert(1)</script>`
+- [ ] 恶意 Author 测试通过：`"><img src=x onerror=alert(1)>`
+- [ ] 密码不进入 localStorage / console / URL。
+- [ ] QPDF 加载失败时不会影响基础功能。
+- [ ] Network 面板确认没有文件上传请求。
+- [ ] README 已说明隐私边界。
 
 ## 手动测试清单
-
-基础功能：
-
-- PDF 合并
-- PDF 拆分
-- 页面管理排序、删除、旋转、导出
-- 添加页码
-- 中文文字水印
-- 图片水印
-- 签名
-- 标注
-- 图片转 PDF
-
-QPDF / 权限：
-
-- 普通 PDF 生成普通副本
-- owner permission 限制 PDF 生成普通副本
-- 需要打开密码的 PDF 输入正确密码后生成普通副本
-- 密码错误时显示友好提示
-- QPDF 不可用时显示降级提示
-- PDF 加密码正常生成
-- 加密后重新上传到“PDF 权限检测”确认状态
-
-V1.6 元数据：
-
-- 上传普通 PDF，能读取标题、作者等信息
-- 一键清空后，重新上传检测，字段已清理
-- 一键随机后，重新上传检测，字段已变更
-- 自定义信息后，重新上传检测，字段正确
-- 带数字签名迹象的 PDF 有提示
-- 带注释 / 表单 / 附件 / JavaScript 迹象的 PDF 有提示
-- 受保护 PDF 无法处理时提示友好
-- QPDF 不可用时基础清理仍可用
-- GitHub Pages 部署后可用
-
-发布前收尾：
 
 - 直接 `file://` 打开时，基础功能可用，QPDF 提示需要 HTTP 服务。
 - `python -m http.server 8080` 下，QPDF 能加载。
 - GitHub Pages 下，QPDF 能加载。
+- PDF 合并、拆分、页面管理、页码、水印、签名、标注、图片转 PDF 正常。
 - 生成普通副本可用。
 - PDF 加密码可用。
 - 图片水印预览大小与导出基本一致，未旋转时一致。
 - 图片化重建标准 / 高清 / 打印级正常。
 - 下载文件名保留原名。
-- 恶意文件名 `<img src=x onerror=alert(1)>.pdf` 不执行脚本。
-- 恶意 PDF 元数据 `Title = <script>alert(1)</script>` 不执行脚本。
+- 恶意文件名不执行脚本。
+- 恶意 PDF 元数据不执行脚本。
 - 手机端布局正常。
 - 暗黑、全宽、紧凑模式正常。
-
-体验：
-
-- 大预览翻页 / 缩放正常
-- 签名、标注点击放置正常
-- 水印、页码预览正常
-- 全宽模式和紧凑模式可记住状态
-- 手机端布局正常，大预览不横向溢出
 
 ## 免责声明
 

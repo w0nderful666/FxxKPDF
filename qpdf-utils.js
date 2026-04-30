@@ -87,6 +87,11 @@ window.PdfQpdf = (() => {
 
   function mapQpdfError(args, code, logs) {
     const text = logs.join("\n");
+    const safeArgs = args.map((arg, index) => {
+      if (/^--password=/i.test(arg)) return "--password=<redacted>";
+      if (args[index - 1] === "--encrypt" || args[index - 2] === "--encrypt") return "<redacted>";
+      return arg;
+    });
     if (code === 0) return null;
     if (/invalid password|incorrect password|password.*incorrect/i.test(text)) return new Error("打开密码不正确，请检查后重试。");
     if (/password.*required|requires a password|invalid password/i.test(text)) return new Error("此 PDF 需要正确打开密码。请输入你已知的打开密码后重试。");
@@ -96,7 +101,7 @@ window.PdfQpdf = (() => {
     if (/damaged|repair|xref|object stream|unable to find|not a pdf|invalid pdf/i.test(text)) {
       return new Error("QPDF 无法重写该文件，可尝试图片化重建副本。");
     }
-    return new Error(`QPDF 处理失败（退出码 ${code}）：${text || args.join(" ")}`);
+    return new Error(`QPDF 处理失败（退出码 ${code}）：${text || safeArgs.join(" ")}`);
   }
 
   async function runQpdf(args, inputBytes, outputPath = OUTPUT) {

@@ -1,8 +1,13 @@
 {
   "scripts": {
-    "vendor:qpdf": "node scripts/vendor-qpdf.mjs"
+    "vendor:qpdf": "node scripts/vendor-qpdf.mjs",
+    "vendor:libs": "node scripts/vendor-libs.mjs",
+    "vendor": "npm run vendor:libs && npm run vendor:qpdf"
   },
   "devDependencies": {
-    "qpdf-wasm-esm-embedded": "1.1.1"
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "3.11.174",
+    "qpdf-wasm-esm-embedded": "1.1.1",
+    "sortablejs": "1.15.2"
   }
 }
