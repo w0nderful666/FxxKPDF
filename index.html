@@ -4,17 +4,22 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' blob: data:; worker-src 'self' blob:; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self';" />
-    <title>PDF 小工坊 - PDF Toolkit Lite</title>
+    <title>FxxKPDF - Local PDF Toolkit</title>
     <meta name="description" content="免费开源的浏览器 PDF 工具箱，本地处理，不上传文件。" />
+    <meta name="theme-color" content="#111827" />
+    <meta property="og:title" content="FxxKPDF - Local PDF Toolkit" />
+    <meta property="og:description" content="本地优先的免费 PDF 工具箱。所有处理在浏览器完成，不上传文件。" />
+    <meta property="og:url" content="https://w0nderful666.github.io/FxxKPDF/" />
+    <meta property="og:type" content="website" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="#top" aria-label="PDF 小工坊首页">
+      <a class="brand" href="#top" aria-label="FxxKPDF 首页">
         <span class="brand-mark">PDF</span>
         <span>
-          <strong>PDF 小工坊</strong>
-          <small>本地处理，不上传文件</small>
+          <strong>FxxKPDF</strong>
+          <small data-i18n="hero_subtitle">本地优先的免费 PDF 工具箱</small>
         </span>
       </a>
       <nav class="nav-actions">
@@ -29,42 +34,69 @@
     </header>
 
     <main id="top">
-      <section class="hero">
+      <!-- Hero Section -->
+      <section class="hero" data-testid="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Privacy-first PDF Toolkit</p>
-          <h1>免费开源的浏览器 PDF 工具箱</h1>
-          <p class="hero-text">合并、拆分、排序、旋转、加水印、签名、图片转 PDF，全部在浏览器本地完成。</p>
+          <p class="eyebrow" data-i18n="hero_eyebrow">Privacy-first PDF Toolkit</p>
+          <h1>FxxKPDF</h1>
+          <p class="hero-text" data-i18n="hero_subtitle_long">本地优先的免费 PDF 工具箱。合并、拆分、排序、旋转、加水印、签名、图片转 PDF，全部在浏览器本地完成。</p>
           <div class="pill-row" aria-label="核心卖点">
-            <span>无需上传</span>
-            <span>无需登录</span>
-            <span>GitHub Pages 可部署</span>
+            <span data-i18n="pill_local">Local First</span>
+            <span data-i18n="pill_no_upload">No Upload</span>
+            <span data-i18n="pill_no_backend">No Backend</span>
+            <span data-i18n="pill_ghpages">GitHub Pages Ready</span>
           </div>
+          <div class="version-badge" data-testid="version-badge">v0.2.0</div>
         </div>
         <div class="hero-panel" aria-label="隐私提示">
           <div class="status-dot"></div>
-          <strong>所有文件只在你的浏览器里处理</strong>
-          <p>不会上传到服务器。刷新页面、关闭标签页或清空工作区后，已载入文件会被移除。</p>
+          <strong data-i18n="hero_panel_title">所有文件只在你的浏览器里处理</strong>
+          <p data-i18n="hero_panel_desc">不会上传到服务器。刷新页面、关闭标签页或清空工作区后，已载入文件会被移除。</p>
         </div>
       </section>
 
+      <!-- 3-Step Guide -->
+      <section class="step-guide" data-testid="step-guide">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3 data-i18n="step1_title">上传</h3>
+          <p data-i18n="step1_desc">选择或拖入 PDF 文件</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3 data-i18n="step2_title">处理</h3>
+          <p data-i18n="step2_desc">选择工具，调整参数</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3 data-i18n="step3_title">下载</h3>
+          <p data-i18n="step3_desc">获取处理后的文件</p>
+        </div>
+      </section>
+
+      <!-- Upload Area (data-testid) -->
+      <div data-testid="upload-area" class="hidden" aria-hidden="true"></div>
+
       <section class="notice">
-        <strong>隐私提示</strong>
-        <span>所有文件均在你的浏览器本地处理，不会上传到服务器。刷新页面后文件会被清空。</span>
+        <strong data-i18n="notice_title">隐私提示</strong>
+        <span data-i18n="notice_text">所有文件均在你的浏览器本地处理，不会上传到服务器。刷新页面后文件会被清空。</span>
       </section>
 
       <details class="explain-card">
-        <summary>为什么有些 PDF 能打开但不能编辑？</summary>
+        <summary data-i18n="explain_title">为什么有些 PDF 能打开但不能编辑？</summary>
         <div>
-          <p>PDF 可能设置了权限限制。某些文件允许查看和打印，但不允许编辑、注释、填写表单或签名。</p>
-          <p>本工具不会破解密码、移除权限或绕过保护。能打开查看，不代表一定能编辑。</p>
-          <p>本工具适合处理普通 PDF、自己创建的 PDF、扫描件、图片转 PDF、学习资料、简历、表格等你有权处理的文件。</p>
+          <p data-i18n="explain_p1">PDF 可能设置了权限限制。某些文件允许查看和打印，但不允许编辑、注释、填写表单或签名。</p>
+          <p data-i18n="explain_p2">本工具不会破解密码、移除权限或绕过保护。能打开查看，不代表一定能编辑。</p>
+          <p data-i18n="explain_p3">本工具适合处理普通 PDF、自己创建的 PDF、扫描件、图片转 PDF、学习资料、简历、表格等你有权处理的文件。</p>
         </div>
       </details>
 
       <section class="tools-section">
         <div class="section-heading">
           <p class="eyebrow">Tools</p>
-          <h2>选择一个工具开始</h2>
+          <h2 data-i18n="tools_heading">选择一个工具开始</h2>
         </div>
         <div class="tool-grid" id="toolGrid"></div>
       </section>
@@ -76,7 +108,7 @@
             <h2 id="activeToolTitle">PDF 合并</h2>
             <p id="activeToolDesc">上传多个 PDF，拖拽排序后合并为一个文件。</p>
           </div>
-          <button class="ghost-btn" id="clearToolBtn" type="button">清空当前工具</button>
+          <button class="ghost-btn" id="clearToolBtn" type="button" data-i18n="clear_tool">清空当前工具</button>
         </div>
 
         <div id="alerts" class="alerts" aria-live="polite"></div>
@@ -556,11 +588,72 @@
           </div>
         </section>
       </section>
+
+      <!-- Privacy Section -->
+      <section class="privacy-section" data-testid="privacy-section">
+        <div class="section-heading">
+          <p class="eyebrow">Privacy</p>
+          <h2 data-i18n="privacy_heading">你的文件，你的隐私</h2>
+        </div>
+        <div class="privacy-grid">
+          <div class="privacy-card">
+            <div class="privacy-icon">🔒</div>
+            <h3 data-i18n="privacy_local_title">100% 本地处理</h3>
+            <p data-i18n="privacy_local_desc">所有 PDF 操作都在你的浏览器中完成，使用 JavaScript 和 WebAssembly。文件永远不会离开你的设备。</p>
+          </div>
+          <div class="privacy-card">
+            <div class="privacy-icon">🚫</div>
+            <h3 data-i18n="privacy_no_upload_title">不上传，不收集</h3>
+            <p data-i18n="privacy_no_upload_desc">没有服务器，没有数据库，没有用户追踪。我们不收集你的文件内容、操作记录或个人信息。</p>
+          </div>
+          <div class="privacy-card">
+            <div class="privacy-icon">🗑️</div>
+            <h3 data-i18n="privacy_clear_title">即时清除</h3>
+            <p data-i18n="privacy_clear_desc">刷新页面、关闭标签页或点击清空按钮后，所有加载的文件和处理结果会立即从内存中移除。</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Roadmap Section -->
+      <section class="roadmap-section" data-testid="roadmap-section">
+        <div class="section-heading">
+          <p class="eyebrow">Roadmap</p>
+          <h2 data-i18n="roadmap_heading">即将推出</h2>
+        </div>
+        <div class="roadmap-grid">
+          <div class="roadmap-card">
+            <div class="roadmap-status">Coming Soon</div>
+            <h3 data-i18n="roadmap_compress">📦 PDF 压缩</h3>
+            <p data-i18n="roadmap_compress_desc">减小 PDF 文件大小，优化图片质量和分辨率。</p>
+          </div>
+          <div class="roadmap-card">
+            <div class="roadmap-status">Coming Soon</div>
+            <h3 data-i18n="roadmap_ocr">🔍 OCR 文字识别</h3>
+            <p data-i18n="roadmap_ocr_desc">从扫描件和图片 PDF 中提取文字内容。</p>
+          </div>
+          <div class="roadmap-card">
+            <div class="roadmap-status">Coming Soon</div>
+            <h3 data-i18n="roadmap_batch_watermark">🖊️ 批量水印</h3>
+            <p data-i18n="roadmap_batch_watermark_desc">一次为多个 PDF 文件添加水印。</p>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <footer class="footer">
-      <p><strong>PDF 小工坊</strong> 是免费开源的纯前端 PDF 工具箱。</p>
-      <p>隐私说明：文件仅在本地浏览器处理，不上传服务器。免责声明：请仅处理你拥有权利或获得授权的 PDF 文件。</p>
+    <footer class="footer" data-testid="footer">
+      <div class="footer-brand">
+        <strong>FxxKPDF</strong>
+        <span class="footer-sep">·</span>
+        <span>v0.2.0</span>
+        <span class="footer-sep">·</span>
+        <span data-i18n="footer_local">Local First</span>
+        <span class="footer-sep">·</span>
+        <span data-i18n="footer_no_backend">No Backend</span>
+        <span class="footer-sep">·</span>
+        <span data-i18n="footer_ghpages">GitHub Pages Ready</span>
+      </div>
+      <p class="footer-sub" data-i18n="footer_built">Built with open-tools-starter style</p>
+      <p class="footer-privacy" data-i18n="footer_privacy">隐私说明：文件仅在本地浏览器处理，不上传服务器。免责声明：请仅处理你拥有权利或获得授权的 PDF 文件。</p>
     </footer>
 
     <script src="./libs/pdf-lib/pdf-lib.min.js"></script>

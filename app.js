@@ -1,4 +1,238 @@
 /* global PDFLib, pdfjsLib, Sortable */
+
+// ==================== i18n System ====================
+const I18N = {
+  zh: {
+    hero_eyebrow: "Privacy-first PDF Toolkit",
+    hero_subtitle: "本地优先的免费 PDF 工具箱",
+    hero_subtitle_long: "本地优先的免费 PDF 工具箱。合并、拆分、排序、旋转、加水印、签名、图片转 PDF，全部在浏览器本地完成。",
+    pill_local: "Local First",
+    pill_no_upload: "No Upload",
+    pill_no_backend: "No Backend",
+    pill_ghpages: "GitHub Pages Ready",
+    hero_panel_title: "所有文件只在你的浏览器里处理",
+    hero_panel_desc: "不会上传到服务器。刷新页面、关闭标签页或清空工作区后，已载入文件会被移除。",
+    step1_title: "上传", step1_desc: "选择或拖入 PDF 文件",
+    step2_title: "处理", step2_desc: "选择工具，调整参数",
+    step3_title: "下载", step3_desc: "获取处理后的文件",
+    notice_title: "隐私提示",
+    notice_text: "所有文件均在你的浏览器本地处理，不会上传到服务器。刷新页面后文件会被清空。",
+    explain_title: "为什么有些 PDF 能打开但不能编辑？",
+    explain_p1: "PDF 可能设置了权限限制。某些文件允许查看和打印，但不允许编辑、注释、填写表单或签名。",
+    explain_p2: "本工具不会破解密码、移除权限或绕过保护。能打开查看，不代表一定能编辑。",
+    explain_p3: "本工具适合处理普通 PDF、自己创建的 PDF、扫描件、图片转 PDF、学习资料、简历、表格等你有权处理的文件。",
+    tools_heading: "选择一个工具开始",
+    clear_tool: "清空当前工具",
+    privacy_heading: "你的文件，你的隐私",
+    privacy_local_title: "100% 本地处理",
+    privacy_local_desc: "所有 PDF 操作都在你的浏览器中完成，使用 JavaScript 和 WebAssembly。文件永远不会离开你的设备。",
+    privacy_no_upload_title: "不上传，不收集",
+    privacy_no_upload_desc: "没有服务器，没有数据库，没有用户追踪。我们不收集你的文件内容、操作记录或个人信息。",
+    privacy_clear_title: "即时清除",
+    privacy_clear_desc: "刷新页面、关闭标签页或点击清空按钮后，所有加载的文件和处理结果会立即从内存中移除。",
+    roadmap_heading: "即将推出",
+    roadmap_compress: "📦 PDF 压缩",
+    roadmap_compress_desc: "减小 PDF 文件大小，优化图片质量和分辨率。",
+    roadmap_ocr: "🔍 OCR 文字识别",
+    roadmap_ocr_desc: "从扫描件和图片 PDF 中提取文字内容。",
+    roadmap_batch_watermark: "🖊️ 批量水印",
+    roadmap_batch_watermark_desc: "一次为多个 PDF 文件添加水印。",
+    footer_local: "Local First",
+    footer_no_backend: "No Backend",
+    footer_ghpages: "GitHub Pages Ready",
+    footer_built: "Built with open-tools-starter style",
+    footer_privacy: "隐私说明：文件仅在本地浏览器处理，不上传服务器。免责声明：请仅处理你拥有权利或获得授权的 PDF 文件。",
+    alert_ready: "PDF 小工坊已就绪。文件会在本地浏览器中处理。",
+    alert_cleared: "已清空当前工具。",
+    btn_merge: "合并 PDF",
+    btn_split: "生成新 PDF",
+    btn_manage_export: "导出 PDF",
+    btn_number: "生成 PDF",
+    btn_text_watermark: "添加水印",
+    btn_image_watermark: "添加图片水印",
+    btn_signature: "添加签名",
+    btn_annotate: "添加并导出",
+    btn_permission: "检测权限",
+    btn_normal_copy: "生成普通副本",
+    btn_protect: "生成加密 PDF",
+    btn_metadata_clear: "一键清空元数据",
+    btn_metadata_random: "一键随机替换",
+    btn_image_pdf: "生成 PDF"
+  },
+  en: {
+    hero_eyebrow: "Privacy-first PDF Toolkit",
+    hero_subtitle: "Local-first Free PDF Toolkit",
+    hero_subtitle_long: "Local-first free PDF toolkit. Merge, split, reorder, rotate, watermark, sign, and convert images to PDF — all in your browser.",
+    pill_local: "Local First",
+    pill_no_upload: "No Upload",
+    pill_no_backend: "No Backend",
+    pill_ghpages: "GitHub Pages Ready",
+    hero_panel_title: "All files are processed in your browser",
+    hero_panel_desc: "No upload to any server. Files are removed when you refresh, close the tab, or clear the workspace.",
+    step1_title: "Upload", step1_desc: "Select or drop PDF files",
+    step2_title: "Process", step2_desc: "Choose a tool, adjust settings",
+    step3_title: "Download", step3_desc: "Get the processed file",
+    notice_title: "Privacy",
+    notice_text: "All files are processed locally in your browser. No upload to any server. Files are cleared on page refresh.",
+    explain_title: "Why can some PDFs open but not be edited?",
+    explain_p1: "PDFs may have permission restrictions. Some files allow viewing and printing but not editing, annotating, form filling, or signing.",
+    explain_p2: "This tool does not crack passwords, remove permissions, or bypass protections. Being able to open and view does not mean it can be edited.",
+    explain_p3: "This tool is suitable for normal PDFs, self-created PDFs, scanned documents, image-to-PDF, study materials, resumes, forms, and other files you have the right to process.",
+    tools_heading: "Choose a tool to get started",
+    clear_tool: "Clear current tool",
+    privacy_heading: "Your Files, Your Privacy",
+    privacy_local_title: "100% Local Processing",
+    privacy_local_desc: "All PDF operations run in your browser using JavaScript and WebAssembly. Files never leave your device.",
+    privacy_no_upload_title: "No Upload, No Collection",
+    privacy_no_upload_desc: "No server, no database, no user tracking. We don't collect your file content, operation history, or personal information.",
+    privacy_clear_title: "Instant Cleanup",
+    privacy_clear_desc: "When you refresh, close the tab, or click clear, all loaded files and results are immediately removed from memory.",
+    roadmap_heading: "Coming Soon",
+    roadmap_compress: "📦 PDF Compression",
+    roadmap_compress_desc: "Reduce PDF file size with optimized image quality and resolution.",
+    roadmap_ocr: "🔍 OCR Text Recognition",
+    roadmap_ocr_desc: "Extract text content from scanned documents and image-based PDFs.",
+    roadmap_batch_watermark: "🖊️ Batch Watermark",
+    roadmap_batch_watermark_desc: "Add watermarks to multiple PDF files at once.",
+    footer_local: "Local First",
+    footer_no_backend: "No Backend",
+    footer_ghpages: "GitHub Pages Ready",
+    footer_built: "Built with open-tools-starter style",
+    footer_privacy: "Privacy: Files are processed locally in your browser, never uploaded. Disclaimer: Only process PDF files you own or have authorization to use.",
+    alert_ready: "FxxKPDF is ready. Files are processed in your browser.",
+    alert_cleared: "Current tool cleared.",
+    btn_merge: "Merge PDF",
+    btn_split: "Generate PDF",
+    btn_manage_export: "Export PDF",
+    btn_number: "Generate PDF",
+    btn_text_watermark: "Add Watermark",
+    btn_image_watermark: "Add Image Watermark",
+    btn_signature: "Add Signature",
+    btn_annotate: "Add & Export",
+    btn_permission: "Check Permissions",
+    btn_normal_copy: "Generate Normal Copy",
+    btn_protect: "Generate Encrypted PDF",
+    btn_metadata_clear: "Clear All Metadata",
+    btn_metadata_random: "Random Replace",
+    btn_image_pdf: "Generate PDF"
+  }
+};
+
+let currentLang = localStorage.getItem("fxxkpdf-lang") || "zh";
+
+function t(key) {
+  return I18N[currentLang]?.[key] || I18N.zh[key] || key;
+}
+
+function applyI18N() {
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.dataset.i18n;
+    const text = t(key);
+    if (text) el.textContent = text;
+  });
+  // Update langBtn text
+  const langBtn = document.getElementById("langBtn");
+  if (langBtn) langBtn.textContent = currentLang === "zh" ? "中文" : "EN";
+  // Update html lang
+  document.documentElement.lang = currentLang === "zh" ? "zh-CN" : "en";
+}
+
+function toggleLang() {
+  currentLang = currentLang === "zh" ? "en" : "zh";
+  localStorage.setItem("fxxkpdf-lang", currentLang);
+  applyI18N();
+  saveSettingsState();
+}
+
+// ==================== Settings Persistence ====================
+const SETTINGS_KEY = "fxxkpdf-settings";
+
+function getSettings() {
+  try {
+    return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
+  } catch { return {}; }
+}
+
+function saveSettings(patch) {
+  const settings = { ...getSettings(), ...patch };
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+
+function saveSettingsState() {
+  saveSettings({
+    theme: document.documentElement.dataset.theme || "light",
+    lang: currentLang,
+    lastTool: state?.active || "merge"
+  });
+}
+
+function loadSettingsFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("theme")) {
+    const theme = params.get("theme");
+    if (theme === "light" || theme === "dark") {
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem("pdf-toolkit-theme", theme);
+    }
+  }
+  if (params.has("lang")) {
+    const lang = params.get("lang");
+    if (lang === "zh" || lang === "en") {
+      currentLang = lang;
+      localStorage.setItem("fxxkpdf-lang", lang);
+    }
+  }
+}
+
+function addRecentOperation(tool, filename, outputSize) {
+  const settings = getSettings();
+  const recent = settings.recent || [];
+  recent.unshift({
+    tool,
+    filename: filename || "document.pdf",
+    timestamp: Date.now(),
+    outputSize: outputSize || 0
+  });
+  // Keep only last 5
+  saveSettings({ recent: recent.slice(0, 5) });
+}
+
+function exportSettings() {
+  const settings = getSettings();
+  settings.version = "0.2.0";
+  const blob = new Blob([JSON.stringify(settings, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "fxxkpdf-settings.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importSettings(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const settings = JSON.parse(reader.result);
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+      if (settings.theme) {
+        document.documentElement.dataset.theme = settings.theme;
+        localStorage.setItem("pdf-toolkit-theme", settings.theme);
+      }
+      if (settings.lang) {
+        currentLang = settings.lang;
+        localStorage.setItem("fxxkpdf-lang", settings.lang);
+        applyI18N();
+      }
+      showAlert("设置已导入。");
+    } catch {
+      showAlert("导入失败：文件格式不正确。", "error");
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ==================== Original Code ====================
 const { PDFDocument, degrees, rgb } = PDFLib;
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = "./libs/pdfjs/pdf.worker.min.js";
@@ -173,6 +407,7 @@ function showResult(toolId, anchor, bytes, filename, detail = "") {
   }
   anchor.classList.add("pulse");
   window.setTimeout(() => anchor.classList.remove("pulse"), 2000);
+  addRecentOperation(toolId, info.filename, info.size);
   return info;
 }
 
@@ -735,6 +970,7 @@ function activateTool(id) {
   $$(".tool-card").forEach((card) => card.classList.toggle("active", card.dataset.tool === id));
   $$(".tool-panel").forEach((panel) => panel.classList.toggle("active", panel.dataset.tool === id));
   $("#workspace").scrollIntoView({ behavior: "smooth", block: "start" });
+  saveSettingsState();
 }
 
 function clearTool(id) {
@@ -785,7 +1021,7 @@ function clearTool(id) {
     else if (typeof state[id][key] === "boolean") state[id][key] = false;
     else state[id][key] = null;
   });
-  showAlert("已清空当前工具。");
+  showAlert(t("alert_cleared"));
 }
 
 function handleNewInput(toolId) {
@@ -2190,6 +2426,7 @@ function initTheme() {
     const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     localStorage.setItem("pdf-toolkit-theme", next);
+    saveSettingsState();
   });
 }
 
@@ -2267,6 +2504,13 @@ function initThumbSizeToggles() {
 }
 
 async function init() {
+  // Load settings from URL params first
+  loadSettingsFromURL();
+  // Restore last active tool from settings
+  const settings = getSettings();
+  if (settings.lastTool && tools.some(t => t[0] === settings.lastTool)) {
+    state.active = settings.lastTool;
+  }
   setupTools();
   initTheme();
   initLayoutModes();
@@ -2274,6 +2518,10 @@ async function init() {
   initDropzones();
   initThumbSizeToggles();
   initLargePreviews();
+  // i18n
+  applyI18N();
+  const langBtn = document.getElementById("langBtn");
+  if (langBtn) langBtn.addEventListener("click", toggleLang);
   await initMerge();
   await initSplit();
   await initManage();
@@ -2287,7 +2535,9 @@ async function init() {
   initProtect();
   initMetadata();
   await initImagePdf();
-  showAlert("PDF 小工坊已就绪。文件会在本地浏览器中处理。");
+  showAlert(t("alert_ready"));
+  // Save initial settings state
+  saveSettingsState();
 }
 
 init().catch((error) => showAlert(friendlyError(error) || "初始化失败。", "error"));

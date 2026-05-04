@@ -587,3 +587,185 @@ h3 { margin-bottom: .9rem; font-size: 1.05rem; }
   .large-preview-toolbar select,
   .large-preview-toolbar input { flex: 1 1 auto; }
 }
+
+/* ==================== v0.2.0 New Sections ==================== */
+
+/* Version Badge */
+.version-badge {
+  display: inline-block;
+  margin-top: .9rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  padding: .35rem .85rem;
+  color: var(--muted);
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+/* 3-Step Guide */
+.step-guide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  padding: 2.5rem 0 3rem;
+  flex-wrap: wrap;
+}
+.step-card {
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  padding: 1.5rem 2rem;
+  min-width: 10rem;
+  flex: 1 1 10rem;
+  max-width: 14rem;
+}
+.step-num {
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-text);
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: .7rem;
+}
+.step-card h3 {
+  margin-bottom: .4rem;
+  font-size: 1.1rem;
+}
+.step-card p {
+  color: var(--muted);
+  font-size: .92rem;
+  margin: 0;
+}
+.step-arrow {
+  font-size: 1.6rem;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+/* Privacy Section */
+.privacy-section {
+  padding: 2rem 0 3rem;
+}
+.privacy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.privacy-card {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  padding: 1.5rem;
+  text-align: center;
+}
+.privacy-icon {
+  font-size: 2rem;
+  margin-bottom: .7rem;
+}
+.privacy-card h3 {
+  margin-bottom: .5rem;
+  font-size: 1.05rem;
+}
+.privacy-card p {
+  color: var(--muted);
+  font-size: .92rem;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Roadmap Section */
+.roadmap-section {
+  padding: 2rem 0 3rem;
+}
+.roadmap-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.roadmap-card {
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  padding: 1.5rem;
+  position: relative;
+}
+.roadmap-status {
+  display: inline-block;
+  border: 1px solid color-mix(in srgb, var(--accent), var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--accent);
+  padding: .25rem .7rem;
+  font-size: .78rem;
+  font-weight: 700;
+  margin-bottom: .75rem;
+}
+.roadmap-card h3 {
+  margin-bottom: .45rem;
+  font-size: 1.05rem;
+}
+.roadmap-card p {
+  color: var(--muted);
+  font-size: .92rem;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* New Footer */
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .5rem;
+  text-align: center;
+}
+.footer-brand {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .35rem;
+  font-size: .95rem;
+}
+.footer-sep {
+  color: var(--muted);
+}
+.footer-sub {
+  color: var(--muted);
+  font-size: .85rem;
+  margin: 0;
+}
+.footer-privacy {
+  color: var(--muted);
+  font-size: .85rem;
+  max-width: 36rem;
+  line-height: 1.65;
+  margin: .5rem 0 0;
+}
+
+/* Responsive for new sections */
+@media (max-width: 860px) {
+  .step-guide { gap: .8rem; }
+  .step-arrow { display: none; }
+  .step-card { min-width: 6rem; padding: 1rem; }
+  .privacy-grid, .roadmap-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .step-guide { flex-direction: column; }
+  .step-card { max-width: 100%; width: 100%; }
+  .footer-brand { font-size: .85rem; }
+}
