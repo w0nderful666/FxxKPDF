@@ -1,282 +1,9 @@
 /* global PDFLib, pdfjsLib, Sortable, JSZip */
 
-// ==================== i18n System ====================
-const I18N = {
-  zh: {
-    hero_eyebrow: "Privacy-first PDF Toolkit",
-    hero_subtitle: "本地优先的免费 PDF 工具箱",
-    hero_subtitle_long: "本地优先的免费 PDF 工具箱。合并、拆分、排序、旋转、加水印、签名、图片转 PDF，全部在浏览器本地完成。",
-    pill_local: "Local First",
-    pill_no_upload: "No Upload",
-    pill_no_backend: "No Backend",
-    pill_ghpages: "GitHub Pages Ready",
-    hero_panel_title: "所有文件只在你的浏览器里处理",
-    hero_panel_desc: "不会上传到服务器。刷新页面、关闭标签页或清空工作区后，已载入文件会被移除。",
-    step1_title: "上传", step1_desc: "选择或拖入 PDF 文件",
-    step2_title: "处理", step2_desc: "选择工具，调整参数",
-    step3_title: "下载", step3_desc: "获取处理后的文件",
-    notice_title: "隐私提示",
-    notice_text: "所有文件均在你的浏览器本地处理，不会上传到服务器。刷新页面后文件会被清空。",
-    explain_title: "为什么有些 PDF 能打开但不能编辑？",
-    explain_p1: "PDF 可能设置了权限限制。某些文件允许查看和打印，但不允许编辑、注释、填写表单或签名。",
-    explain_p2: "本工具不会破解密码、移除权限或绕过保护。能打开查看，不代表一定能编辑。",
-    explain_p3: "本工具适合处理普通 PDF、自己创建的 PDF、扫描件、图片转 PDF、学习资料、简历、表格等你有权处理的文件。",
-    tools_heading: "选择一个工具开始",
-    clear_tool: "清空当前工具",
-    privacy_heading: "你的文件，你的隐私",
-    privacy_local_title: "100% 本地处理",
-    privacy_local_desc: "所有 PDF 操作都在你的浏览器中完成，使用 JavaScript 和 WebAssembly。文件永远不会离开你的设备。",
-    privacy_no_upload_title: "不上传，不收集",
-    privacy_no_upload_desc: "没有服务器，没有数据库，没有用户追踪。我们不收集你的文件内容、操作记录或个人信息。",
-    privacy_clear_title: "即时清除",
-    privacy_clear_desc: "刷新页面、关闭标签页或点击清空按钮后，所有加载的文件和处理结果会立即从内存中移除。",
-    roadmap_heading: "即将推出",
-    roadmap_compress: "📦 PDF 压缩",
-    roadmap_compress_desc: "减小 PDF 文件大小，优化图片质量和分辨率。",
-    roadmap_ocr: "🔍 OCR 文字识别",
-    roadmap_ocr_desc: "从扫描件和图片 PDF 中提取文字内容。",
-    roadmap_batch_watermark: "🖊️ 批量水印",
-    roadmap_batch_watermark_desc: "一次为多个 PDF 文件添加水印。",
-    footer_local: "Local First",
-    footer_no_backend: "No Backend",
-    footer_ghpages: "GitHub Pages Ready",
-    footer_built: "Built with open-tools-starter style",
-    footer_privacy: "隐私说明：文件仅在本地浏览器处理，不上传服务器。免责声明：请仅处理你拥有权利或获得授权的 PDF 文件。",
-    alert_ready: "PDF 小工坊已就绪。文件会在本地浏览器中处理。",
-    alert_cleared: "已清空当前工具。",
-    btn_merge: "合并 PDF",
-    btn_split: "生成新 PDF",
-    btn_manage_export: "导出 PDF",
-    btn_number: "生成 PDF",
-    btn_text_watermark: "添加水印",
-    btn_image_watermark: "添加图片水印",
-    btn_signature: "添加签名",
-    btn_annotate: "添加并导出",
-    btn_permission: "检测权限",
-    btn_normal_copy: "生成普通副本",
-    btn_protect: "生成加密 PDF",
-    btn_metadata_clear: "一键清空元数据",
-    btn_metadata_random: "一键随机替换",
-    btn_image_pdf: "生成 PDF",
-    tool_merge: "PDF 合并",
-    tool_merge_desc: "上传多个 PDF，拖拽排序后一键合并。",
-    tool_split: "PDF 拆分 / 提取页面",
-    tool_split_desc: "输入页码范围，导出需要的页面。",
-    tool_manage: "页面管理",
-    tool_manage_desc: "排序、删除、提取、旋转页面。",
-    tool_number: "添加页码",
-    tool_number_desc: "选择位置、字号和页码格式。",
-    tool_textwatermark: "添加文字水印",
-    tool_textwatermark_desc: "中文水印通过 Canvas 图片嵌入。",
-    tool_imagewatermark: "添加图片水印",
-    tool_imagewatermark_desc: "添加 PNG / JPG 水印并调节透明度。",
-    tool_signature: "签名 / 盖章",
-    tool_signature_desc: "上传签名图或手写签名后放置。",
-    tool_annotate: "添加文字 / 形状 / 图片",
-    tool_annotate_desc: "用清晰参数添加简单标注。",
-    tool_permissions: "PDF 权限检测",
-    tool_permissions_desc: "查看加密、打印、复制、编辑、注释、表单和签名权限。",
-    tool_normalcopy: "生成普通副本",
-    tool_normalcopy_desc: "将你有权处理的受限 PDF 重新保存为普通副本。",
-    tool_protect: "PDF 加密码",
-    tool_protect_desc: "给你拥有权利的 PDF 添加打开密码和基础权限设置。",
-    tool_metadata: "PDF 元数据清理",
-    tool_metadata_desc: "查看、清空或随机替换 PDF 文件属性中的隐私信息。",
-    tool_imagepdf: "JPG / PNG 转 PDF",
-    tool_imagepdf_desc: "多图排序后生成 PDF。",
-    err_no_file: "请先上传一个 PDF。",
-    err_no_images: "请先上传 JPG 或 PNG 图片。",
-    err_no_two_files: "请至少上传两个 PDF。",
-    err_no_selection: "请先选择要操作的页面。",
-    err_no_signature: "请上传签名图片，或在画布中手写签名。",
-    err_no_watermark_text: "请输入水印文字。",
-    err_consent_required: "请先确认这是你拥有权利或已获得授权处理的 PDF 文件。",
-    err_password_required: "请设置打开密码。",
-    err_password_mismatch: "两次输入的打开密码不一致。",
-    err_file_type_mismatch: "拖入的文件类型不符合当前工具要求。",
-    err_range_required: "请先修正页码范围。",
-    err_page_out_of_range: "页码超出范围。",
-    processing: "处理中...",
-    success_merge: "合并完成，可以下载了。",
-    success_split: "提取完成，可以下载了。",
-    success_export: "导出完成，可以下载了。",
-    success_number: "页码已添加。",
-    success_watermark: "水印已添加。",
-    success_signature: "签名添加完成。",
-    success_annotate: "标注添加完成。",
-    success_image_pdf: "图片 PDF 生成完成。",
-    settings_imported: "设置已导入。",
-    settings_import_fail: "导入失败：文件格式不正确。",
-    tool_cleared: "已清空当前工具。",
-    // v0.3.0 additions
-    zip_download: "下载全部 ZIP",
-    zip_generating: "ZIP 生成中...",
-    zip_download_failed: "ZIP 下载失败",
-    zip_ready: "ZIP 文件已生成，可以下载。",
-    page_range: "页面范围",
-    page_range_all: "all = 全部页面",
-    page_range_odd: "odd = 奇数页",
-    page_range_even: "even = 偶数页",
-    page_range_example: "示例：1-3,5,7-9",
-    invalid_page_number: "非法页码",
-    page_out_of_range: "页码超出范围",
-    output_count: "输出数量",
-    page_selection_summary: "页面选择摘要",
-    split_perpage: "每页拆分为单独 PDF",
-    split_extract_single: "按页面范围提取为一个 PDF",
-    split_extract_multi: "按页面范围拆成多个 PDF",
-    delete_pages: "删除指定页面",
-    extract_pages: "提取指定页面",
-    keep_pages: "保留指定页面",
-    manage_range_selected: "已选择页面",
-    manage_range_deleted: "已删除指定页面",
-    manage_range_kept: "已保留指定页面",
-    split_mode_perpage: "每页拆分为单独 PDF",
-    split_mode_extract: "按页面范围提取为一个 PDF",
-    split_mode_ranges: "按页面范围拆成多个 PDF",
-    estimated_output: "预计输出"
-  },
-  en: {
-    hero_eyebrow: "Privacy-first PDF Toolkit",
-    hero_subtitle: "Local-first Free PDF Toolkit",
-    hero_subtitle_long: "Local-first free PDF toolkit. Merge, split, reorder, rotate, watermark, sign, and convert images to PDF — all in your browser.",
-    pill_local: "Local First",
-    pill_no_upload: "No Upload",
-    pill_no_backend: "No Backend",
-    pill_ghpages: "GitHub Pages Ready",
-    hero_panel_title: "All files are processed in your browser",
-    hero_panel_desc: "No upload to any server. Files are removed when you refresh, close the tab, or clear the workspace.",
-    step1_title: "Upload", step1_desc: "Select or drop PDF files",
-    step2_title: "Process", step2_desc: "Choose a tool, adjust settings",
-    step3_title: "Download", step3_desc: "Get the processed file",
-    notice_title: "Privacy",
-    notice_text: "All files are processed locally in your browser. No upload to any server. Files are cleared on page refresh.",
-    explain_title: "Why can some PDFs open but not be edited?",
-    explain_p1: "PDFs may have permission restrictions. Some files allow viewing and printing but not editing, annotating, form filling, or signing.",
-    explain_p2: "This tool does not crack passwords, remove permissions, or bypass protections. Being able to open and view does not mean it can be edited.",
-    explain_p3: "This tool is suitable for normal PDFs, self-created PDFs, scanned documents, image-to-PDF, study materials, resumes, forms, and other files you have the right to process.",
-    tools_heading: "Choose a tool to get started",
-    clear_tool: "Clear current tool",
-    privacy_heading: "Your Files, Your Privacy",
-    privacy_local_title: "100% Local Processing",
-    privacy_local_desc: "All PDF operations run in your browser using JavaScript and WebAssembly. Files never leave your device.",
-    privacy_no_upload_title: "No Upload, No Collection",
-    privacy_no_upload_desc: "No server, no database, no user tracking. We don't collect your file content, operation history, or personal information.",
-    privacy_clear_title: "Instant Cleanup",
-    privacy_clear_desc: "When you refresh, close the tab, or click clear, all loaded files and results are immediately removed from memory.",
-    roadmap_heading: "Coming Soon",
-    roadmap_compress: "📦 PDF Compression",
-    roadmap_compress_desc: "Reduce PDF file size with optimized image quality and resolution.",
-    roadmap_ocr: "🔍 OCR Text Recognition",
-    roadmap_ocr_desc: "Extract text content from scanned documents and image-based PDFs.",
-    roadmap_batch_watermark: "🖊️ Batch Watermark",
-    roadmap_batch_watermark_desc: "Add watermarks to multiple PDF files at once.",
-    footer_local: "Local First",
-    footer_no_backend: "No Backend",
-    footer_ghpages: "GitHub Pages Ready",
-    footer_built: "Built with open-tools-starter style",
-    footer_privacy: "Privacy: Files are processed locally in your browser, never uploaded. Disclaimer: Only process PDF files you own or have authorization to use.",
-    alert_ready: "FxxKPDF is ready. Files are processed in your browser.",
-    alert_cleared: "Current tool cleared.",
-    btn_merge: "Merge PDF",
-    btn_split: "Generate PDF",
-    btn_manage_export: "Export PDF",
-    btn_number: "Generate PDF",
-    btn_text_watermark: "Add Watermark",
-    btn_image_watermark: "Add Image Watermark",
-    btn_signature: "Add Signature",
-    btn_annotate: "Add & Export",
-    btn_permission: "Check Permissions",
-    btn_normal_copy: "Generate Normal Copy",
-    btn_protect: "Generate Encrypted PDF",
-    btn_metadata_clear: "Clear All Metadata",
-    btn_metadata_random: "Random Replace",
-    btn_image_pdf: "Generate PDF",
-    tool_merge: "PDF Merge",
-    tool_merge_desc: "Combine multiple PDFs, drag to reorder.",
-    tool_split: "PDF Split / Extract",
-    tool_split_desc: "Extract pages by range, export what you need.",
-    tool_manage: "Page Manager",
-    tool_manage_desc: "Reorder, delete, extract, rotate pages.",
-    tool_number: "Page Numbers",
-    tool_number_desc: "Add page numbers with custom position and format.",
-    tool_textwatermark: "Text Watermark",
-    tool_textwatermark_desc: "Add text watermark via Canvas image embedding.",
-    tool_imagewatermark: "Image Watermark",
-    tool_imagewatermark_desc: "Add PNG/JPG watermark with opacity control.",
-    tool_signature: "Signature / Stamp",
-    tool_signature_desc: "Upload or hand-draw signature, place on page.",
-    tool_annotate: "Annotations",
-    tool_annotate_desc: "Add text, shapes, and images with precise parameters.",
-    tool_permissions: "Permission Check",
-    tool_permissions_desc: "View encryption, print, copy, edit, form, and signature permissions.",
-    tool_normalcopy: "Normal Copy",
-    tool_normalcopy_desc: "Re-save restricted PDF as a normal copy.",
-    tool_protect: "Password Protection",
-    tool_protect_desc: "Add open password and permission settings via QPDF WASM.",
-    tool_metadata: "Metadata Cleanup",
-    tool_metadata_desc: "View, clear, or randomize PDF metadata fields.",
-    tool_imagepdf: "Image to PDF",
-    tool_imagepdf_desc: "Convert multiple JPG/PNG images to PDF.",
-    err_no_file: "Please upload a PDF first.",
-    err_no_images: "Please upload JPG or PNG images first.",
-    err_no_two_files: "Please upload at least two PDFs.",
-    err_no_selection: "Please select pages first.",
-    err_no_signature: "Please upload a signature image or draw one on the canvas.",
-    err_no_watermark_text: "Please enter watermark text.",
-    err_consent_required: "Please confirm you have the right to process this PDF.",
-    err_password_required: "Please set an open password.",
-    err_password_mismatch: "The two passwords do not match.",
-    err_file_type_mismatch: "Dropped file type is not supported by this tool.",
-    err_range_required: "Please fix the page range first.",
-    err_page_out_of_range: "Page number is out of range.",
-    processing: "Processing...",
-    success_merge: "Merge complete, ready to download.",
-    success_split: "Extraction complete, ready to download.",
-    success_export: "Export complete, ready to download.",
-    success_number: "Page numbers added.",
-    success_watermark: "Watermark added.",
-    success_signature: "Signature added.",
-    success_annotate: "Annotation added.",
-    success_image_pdf: "Image PDF generated.",
-    settings_imported: "Settings imported.",
-    settings_import_fail: "Import failed: invalid file format.",
-    tool_cleared: "Current tool cleared.",
-    // v0.3.0 additions
-    zip_download: "Download all as ZIP",
-    zip_generating: "Generating ZIP...",
-    zip_download_failed: "ZIP download failed",
-    zip_ready: "ZIP file is ready to download.",
-    page_range: "Page Range",
-    page_range_all: "all = all pages",
-    page_range_odd: "odd = odd pages",
-    page_range_even: "even = even pages",
-    page_range_example: "Example: 1-3,5,7-9",
-    invalid_page_number: "Invalid page number",
-    page_out_of_range: "Page number out of range",
-    output_count: "Output count",
-    page_selection_summary: "Page selection summary",
-    split_perpage: "Split each page into a separate PDF",
-    split_extract_single: "Extract page range as a single PDF",
-    split_extract_multi: "Split page range into multiple PDFs",
-    delete_pages: "Delete specified pages",
-    extract_pages: "Extract specified pages",
-    keep_pages: "Keep specified pages",
-    manage_range_selected: "Pages selected",
-    manage_range_deleted: "Specified pages deleted",
-    manage_range_kept: "Specified pages kept",
-    split_mode_perpage: "Split each page into a separate PDF",
-    split_mode_extract: "Extract page range as a single PDF",
-    split_mode_ranges: "Split page range into multiple PDFs",
-    estimated_output: "Estimated output"
-  }
-};
-
-let currentLang = localStorage.getItem("fxxkpdf-lang") || "zh";
-
-function t(key) {
-  return I18N[currentLang]?.[key] || I18N.zh[key] || key;
-}
+// ==================== i18n System (v0.3.1: delegated to window.i18n) ====================
+/* v0.3.1: I18N object moved to js/i18n.js → window.i18n */
+const t = window.i18n.t;
+let currentLang = window.i18n.getLang();
 
 function applyI18N() {
   document.querySelectorAll("[data-i18n]").forEach((el) => {
@@ -306,24 +33,17 @@ function applyI18N() {
 
 function toggleLang() {
   currentLang = currentLang === "zh" ? "en" : "zh";
-  localStorage.setItem("fxxkpdf-lang", currentLang);
+  window.i18n.setLang(currentLang);
   applyI18N();
   saveSettingsState();
 }
 
-// ==================== Settings Persistence ====================
-const SETTINGS_KEY = "fxxkpdf-settings";
+// ==================== Settings Persistence (v0.3.1: delegated to window.storage) ====================
+/* v0.3.1: localStorage operations moved to js/storage.js → window.storage */
+const SETTINGS_KEY = window.siteMeta.storageKeys.settings;
 
-function getSettings() {
-  try {
-    return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
-  } catch { return {}; }
-}
-
-function saveSettings(patch) {
-  const settings = { ...getSettings(), ...patch };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-}
+function getSettings() { return window.storage.getSettings(); }
+function saveSettings(patch) { window.storage.saveSettings(patch); }
 
 function saveSettingsState() {
   saveSettings({
@@ -339,92 +59,32 @@ function loadSettingsFromURL() {
     const theme = params.get("theme");
     if (theme === "light" || theme === "dark") {
       document.documentElement.dataset.theme = theme;
-      localStorage.setItem("pdf-toolkit-theme", theme);
+      window.storage.safeSet(window.siteMeta.storageKeys.theme, theme);
     }
   }
   if (params.has("lang")) {
     const lang = params.get("lang");
     if (lang === "zh" || lang === "en") {
       currentLang = lang;
-      localStorage.setItem("fxxkpdf-lang", lang);
+      window.i18n.setLang(lang);
     }
   }
 }
 
 function addRecentOperation(tool, filename, outputSize, extra = {}) {
-  const settings = getSettings();
-  const recent = settings.recent || [];
-  const toolMeta = tools.find((t) => t[0] === tool);
-  recent.unshift({
-    tool,
-    toolName: toolMeta ? t(toolMeta[1]) : tool,
-    filename: filename || "document.pdf",
-    timestamp: Date.now(),
-    outputSize: outputSize || 0,
-    inputCount: extra.inputCount || 1,
-    outputCount: extra.outputCount || 1,
-    isZip: extra.isZip || false,
-    pageRange: extra.pageRange || ""
-  });
-  // Keep only last 10
-  saveSettings({ recent: recent.slice(0, 10) });
+  window.storage.addRecentOperation(tool, filename, outputSize, extra);
 }
 
-function exportSettings() {
-  const settings = getSettings();
-  settings.version = "0.3.0";
-  const blob = new Blob([JSON.stringify(settings, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "fxxkpdf-settings.json";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importSettings(file) {
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const settings = JSON.parse(reader.result);
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-      if (settings.theme) {
-        document.documentElement.dataset.theme = settings.theme;
-        localStorage.setItem("pdf-toolkit-theme", settings.theme);
-      }
-      if (settings.lang) {
-        currentLang = settings.lang;
-        localStorage.setItem("fxxkpdf-lang", settings.lang);
-        applyI18N();
-      }
-      showAlert("设置已导入。");
-    } catch {
-      showAlert("导入失败：文件格式不正确。", "error");
-    }
-  };
-  reader.readAsText(file);
-}
+const exportSettings = window.storage.exportSettings;
+const importSettings = window.storage.importSettings;
 
 // ==================== Original Code ====================
 const { PDFDocument, degrees, rgb } = PDFLib;
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = "./libs/pdfjs/pdf.worker.min.js";
 
-const tools = [
-  ["merge", "tool_merge", "tool_merge_desc"],
-  ["split", "tool_split", "tool_split_desc"],
-  ["manage", "tool_manage", "tool_manage_desc"],
-  ["number", "tool_number", "tool_number_desc"],
-  ["textwatermark", "tool_textwatermark", "tool_textwatermark_desc"],
-  ["imagewatermark", "tool_imagewatermark", "tool_imagewatermark_desc"],
-  ["signature", "tool_signature", "tool_signature_desc"],
-  ["annotate", "tool_annotate", "tool_annotate_desc"],
-  ["permissions", "tool_permissions", "tool_permissions_desc"],
-  ["normalcopy", "tool_normalcopy", "tool_normalcopy_desc"],
-  ["protect", "tool_protect", "tool_protect_desc"],
-  ["metadata", "tool_metadata", "tool_metadata_desc"],
-  ["imagepdf", "tool_imagepdf", "tool_imagepdf_desc"]
-];
+// v0.3.1: Tool list from toolRegistry
+const tools = window.toolRegistry.getLegacyArray();
 
 const state = {
   active: "merge",
@@ -622,170 +282,20 @@ function colorToRgb(hex) {
   return rgb(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
 }
 
-function parsePageRange(input, total) {
-  const text = input.trim();
-  if (!text) throw new Error("请输入页码范围。");
-  const pages = [];
-  for (const part of text.split(",")) {
-    const token = part.trim();
-    if (/^\d+$/.test(token)) {
-      pages.push(Number(token));
-    } else if (/^\d+\s*-\s*\d+$/.test(token)) {
-      const [start, end] = token.split("-").map((v) => Number(v.trim()));
-      if (start > end) throw new Error(`页码范围 ${token} 的起始页不能大于结束页。`);
-      for (let i = start; i <= end; i += 1) pages.push(i);
-    } else {
-      throw new Error(`无法识别页码范围：${token}`);
-    }
-  }
-  const unique = [...new Set(pages)];
-  const bad = unique.find((page) => page < 1 || page > total);
-  if (bad) throw new Error(`页码 ${bad} 超出范围。当前 PDF 共 ${total} 页。`);
-  return unique.map((page) => page - 1);
-}
-
-function parsePageRangeDetailed(input, total) {
-  const text = input.trim();
-  if (!text) throw new Error("请输入页码范围。");
-  const pages = [];
-  for (const part of text.split(",")) {
-    const token = part.trim();
-    if (!token) continue;
-    if (/^\d+$/.test(token)) {
-      pages.push(Number(token));
-    } else if (/^\d+\s*-\s*\d+$/.test(token)) {
-      const [start, end] = token.split("-").map((v) => Number(v.trim()));
-      if (start > end) throw new Error(`页码范围 ${token} 的起始页不能大于结束页。`);
-      for (let i = start; i <= end; i += 1) pages.push(i);
-    } else {
-      throw new Error(`无法识别页码范围：${token}`);
-    }
-  }
-  const unique = [...new Set(pages)];
-  const bad = unique.find((page) => page < 1 || page > total);
-  if (bad) throw new Error(`页码 ${bad} 超出范围。当前 PDF 共 ${total} 页。`);
-  return {
-    indexes: unique.map((page) => page - 1),
-    numbers: unique,
-    duplicateCount: pages.length - unique.length
-  };
-}
-
-function summarizePages(numbers) {
-  const head = numbers.slice(0, 12).join(", ");
-  return `将处理 ${numbers.length} 页：${head}${numbers.length > 12 ? "..." : ""}`;
-}
+// v0.3.1: Page range parsing delegated to window.rangeParser
+function parsePageRange(input, total) { return window.rangeParser.parsePageRange(input, total); }
+function parsePageRangeDetailed(input, total) { return window.rangeParser.parsePageRangeDetailed(input, total); }
+function summarizePages(numbers) { return window.rangeParser.summarizePages(numbers); }
 
 // ==================== v0.3.0: Enhanced Page Range Parser ====================
-function parsePageRanges(input, totalPages) {
-  const text = input.trim().toLowerCase();
-  if (!text) throw new Error(currentLang === "zh" ? "请输入页面范围。" : "Please enter a page range.");
-  // Handle keywords
-  if (text === "all") {
-    return { indexes: Array.from({ length: totalPages }, (_, i) => i), numbers: Array.from({ length: totalPages }, (_, i) => i + 1) };
-  }
-  if (text === "odd") {
-    const numbers = Array.from({ length: totalPages }, (_, i) => i + 1).filter((n) => n % 2 === 1);
-    return { indexes: numbers.map((n) => n - 1), numbers };
-  }
-  if (text === "even") {
-    const numbers = Array.from({ length: totalPages }, (_, i) => i + 1).filter((n) => n % 2 === 0);
-    return { indexes: numbers.map((n) => n - 1), numbers };
-  }
-  // Parse ranges
-  const pages = [];
-  for (const part of text.split(",")) {
-    const token = part.trim();
-    if (!token) continue;
-    if (/^\d+$/.test(token)) {
-      pages.push(Number(token));
-    } else if (/^\d+\s*-\s*\d+$/.test(token)) {
-      const [start, end] = token.split("-").map((v) => Number(v.trim()));
-      if (start > end) throw new Error(currentLang === "zh" ? `页码范围 ${token} 的起始页不能大于结束页。` : `Range ${token}: start cannot be greater than end.`);
-      for (let i = start; i <= end; i += 1) pages.push(i);
-    } else {
-      throw new Error(currentLang === "zh" ? `无法识别页面范围：${token}` : `Cannot parse page range: ${token}`);
-    }
-  }
-  const unique = [...new Set(pages)];
-  const bad = unique.find((page) => page < 1 || page > totalPages);
-  if (bad) {
-    throw new Error(currentLang === "zh"
-      ? `页码 ${bad} 超出范围。当前 PDF 共 ${totalPages} 页。`
-      : `Page ${bad} is out of range. This PDF has ${totalPages} pages.`);
-  }
-  if (unique.length === 0) throw new Error(currentLang === "zh" ? "未选择任何页面。" : "No pages selected.");
-  return { indexes: unique.map((page) => page - 1), numbers: unique };
-}
+// v0.3.1: Delegated to window.rangeParser
+function parsePageRanges(input, totalPages) { return window.rangeParser.parsePageRanges(input, totalPages); }
 
 // ==================== v0.3.0: ZIP Download Utilities ====================
-function getZipFileName() {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, "0");
-  const d = String(now.getDate()).padStart(2, "0");
-  return `FxxKPDF-results-${y}-${m}-${d}.zip`;
-}
-
-async function downloadAsZip(files, baseName) {
-  // files: [{name: string, data: Uint8Array}]
-  if (!files.length) return;
-  if (typeof JSZip === "undefined") throw new Error(currentLang === "zh" ? "JSZip 库未加载，无法生成 ZIP。" : "JSZip library not loaded.");
-  const zip = new JSZip();
-  for (const file of files) {
-    zip.file(file.name, file.data);
-  }
-  const content = await zip.generateAsync({ type: "blob" });
-  const url = URL.createObjectURL(content);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = baseName || getZipFileName();
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function showZipResult(toolId, files, zipFileName) {
-  const resultId = {
-    imagewatermark: "imageWatermark",
-    textwatermark: "textWatermark",
-    imagepdf: "imagePdf"
-  }[toolId] || toolId;
-  const result = $(`#${resultId}Result`);
-  if (!result) return;
-  const totalSize = files.reduce((sum, f) => sum + f.data.length, 0);
-  result.innerHTML = `
-    <strong>${t("success_split")}</strong>
-    <p>${t("output_count")}：${files.length} 个文件 · ${formatSize(totalSize)}</p>
-    <div class="file-list-summary">${files.map((f) => escapeHTML(f.name)).join(", ")}</div>
-    <div class="button-row">
-      <button class="primary-btn zip-download-btn" type="button" data-zip-tool="${toolId}">${t("zip_download")}</button>
-      <button class="ghost-btn" type="button" data-result-clear="${toolId}">${currentLang === "zh" ? "再处理一个文件 / 清空" : "Process another / Clear"}</button>
-    </div>
-  `;
-  result.classList.remove("hidden");
-  result.querySelector("[data-result-clear]").addEventListener("click", () => clearTool(toolId));
-  const zipBtn = result.querySelector(".zip-download-btn");
-  let zipBusy = false;
-  zipBtn.addEventListener("click", async () => {
-    if (zipBusy) return;
-    zipBusy = true;
-    zipBtn.disabled = true;
-    zipBtn.textContent = t("zip_generating");
-    try {
-      await downloadAsZip(files, zipFileName || getZipFileName());
-      showAlert(t("zip_ready"));
-      addRecentOperation(toolId, zipFileName || getZipFileName(), totalSize, { outputCount: files.length, isZip: true });
-    } catch (error) {
-      showAlert(t("zip_download_failed") + "：" + (error.message || error), "error");
-    } finally {
-      zipBusy = false;
-      zipBtn.disabled = false;
-      zipBtn.textContent = t("zip_download");
-    }
-  });
-  result.scrollIntoView({ behavior: "smooth", block: "center" });
-  addRecentOperation(toolId, zipFileName || getZipFileName(), totalSize, { outputCount: files.length, isZip: true });
-}
+// v0.3.1: Delegated to window.zipUtils
+function getZipFileName() { return window.zipUtils.getZipFileName(); }
+async function downloadAsZip(files, baseName) { return window.zipUtils.downloadAsZip(files, baseName); }
+function showZipResult(toolId, files, zipFileName) { return window.zipUtils.showZipResult(toolId, files, zipFileName); }
 
 async function getPdfJsDocument(file) {
   const data = await bytesFromFile(file);

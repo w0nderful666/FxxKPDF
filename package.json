@@ -1,6 +1,6 @@
 {
   "name": "fxxkpdf",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Local-first, privacy-first PDF toolkit. All processing happens in your browser — no upload, no backend.",
   "private": true,
   "license": "MIT",
@@ -16,7 +16,12 @@
     "vendor": "npm run vendor:libs && npm run vendor:qpdf",
     "build": "node scripts/build.mjs",
     "self-test": "node scripts/run-self-test.mjs",
-    "preflight": "node scripts/preflight.mjs"
+    "preflight": "node scripts/preflight.mjs",
+    "check:i18n": "node scripts/check-i18n.mjs",
+    "check:tools": "node scripts/check-tool-registry.mjs",
+    "check:version": "node scripts/check-version-sync.mjs",
+    "check:privacy": "node scripts/check-privacy.mjs",
+    "test": "npm run build && npm run self-test && npm run preflight"
   },
   "devDependencies": {
     "pdf-lib": "1.17.1",

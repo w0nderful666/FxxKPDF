@@ -27,4 +27,18 @@ if (existsSync(libsSrc)) {
   console.log("  ✓ libs/");
 }
 
+// Copy js/
+const jsSrc = join(root, "js");
+if (existsSync(jsSrc)) {
+  cpSync(jsSrc, join(dist, "js"), { recursive: true });
+  console.log("  ✓ js/");
+}
+
+// Copy docs/
+const docsSrc = join(root, "docs");
+if (existsSync(docsSrc)) {
+  cpSync(docsSrc, join(dist, "docs"), { recursive: true });
+  console.log("  ✓ docs/");
+}
+
 console.log("\n✅ Build complete → dist/");

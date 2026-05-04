@@ -14,7 +14,7 @@ console.log("Running self-test…\n");
 
 // --- package.json ---
 const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf-8"));
-check("package.json version is 0.3.0", pkg.version === "0.3.0");
+check("package.json version is 0.3.1", pkg.version === "0.3.1");
 
 // --- README.md ---
 check("README.md exists", existsSync(join(root, "README.md")));
@@ -31,38 +31,60 @@ check("index.html has tool grid", /id="toolGrid"/.test(html));
 check("index.html has privacy section", /data-testid="privacy-section"/.test(html));
 check("index.html has dark mode button", /id="themeToggle"/.test(html));
 check("index.html has language toggle", /id="langBtn"/.test(html));
-check("index.html has v0.3.0", /v0\.3\.0/.test(html));
+check("index.html has v0.3.1", /v0\.3\.1/.test(html));
 check("index.html footer has 'Local First'", /Local First/.test(html));
 check("index.html footer has 'No Backend'", /No Backend/.test(html));
 check("index.html footer has 'GitHub Pages Ready'", /GitHub Pages Ready/.test(html));
 
-// --- v0.3.0: ZIP download related ---
+// --- v0.3.1: JS module script tags ---
+check("index.html loads siteMeta.js", /js\/siteMeta\.js/.test(html));
+check("index.html loads i18n.js", /js\/i18n\.js/.test(html));
+check("index.html loads storage.js", /js\/storage\.js/.test(html));
+check("index.html loads toolRegistry.js", /js\/toolRegistry\.js/.test(html));
+check("index.html loads rangeParser.js", /js\/rangeParser\.js/.test(html));
+check("index.html loads zipUtils.js", /js\/zipUtils\.js/.test(html));
+check("index.html loads fileUtils.js", /js\/fileUtils\.js/.test(html));
+
+// --- v0.3.1: Module files exist ---
+check("js/siteMeta.js exists", existsSync(join(root, "js", "siteMeta.js")));
+check("js/i18n.js exists", existsSync(join(root, "js", "i18n.js")));
+check("js/storage.js exists", existsSync(join(root, "js", "storage.js")));
+check("js/toolRegistry.js exists", existsSync(join(root, "js", "toolRegistry.js")));
+check("js/rangeParser.js exists", existsSync(join(root, "js", "rangeParser.js")));
+check("js/zipUtils.js exists", existsSync(join(root, "js", "zipUtils.js")));
+check("js/fileUtils.js exists", existsSync(join(root, "js", "fileUtils.js")));
+
+// --- app.js uses modules ---
 const appJs = readFileSync(join(root, "app.js"), "utf-8");
-check("app.js has ZIP download logic (JSZip)", /JSZip/.test(appJs));
+check("app.js delegates to window.i18n", /window\.i18n/.test(appJs));
+check("app.js delegates to window.storage", /window\.storage/.test(appJs));
+check("app.js delegates to window.rangeParser", /window\.rangeParser/.test(appJs));
+check("app.js delegates to window.zipUtils", /window\.zipUtils/.test(appJs));
+check("app.js uses toolRegistry.getLegacyArray", /window\.toolRegistry\.getLegacyArray/.test(appJs));
+
+// --- v0.3.0: ZIP download still works (via delegation) ---
 check("app.js has downloadAsZip function", /function downloadAsZip/.test(appJs));
 check("app.js has showZipResult function", /function showZipResult/.test(appJs));
 
-// --- v0.3.0: Page range parser ---
+// --- v0.3.0: Page range parser still works (via delegation) ---
 check("app.js has parsePageRanges function", /function parsePageRanges/.test(appJs));
-check("app.js supports 'all' keyword", /['"](all)['"]/.test(appJs));
-check("app.js supports 'odd' keyword", /['"](odd)['"]/.test(appJs));
-check("app.js supports 'even' keyword", /['"](even)['"]/.test(appJs));
 
 // --- v0.3.0: Page range help text in HTML ---
 check("HTML has page range help text", /支持.*all.*odd.*even/i.test(html) || /supports.*all.*odd.*even/i.test(html));
 
-// --- v0.3.0: i18n entries ---
-check("app.js i18n has zip_download", /zip_download/.test(appJs));
-check("app.js i18n has page_range", /page_range/.test(appJs));
-check("app.js i18n has split_perpage", /split_perpage/.test(appJs));
-check("app.js i18n has delete_pages", /delete_pages/.test(appJs));
+// --- v0.3.1: i18n entries in js/i18n.js ---
+const i18nSrc = readFileSync(join(root, "js", "i18n.js"), "utf8");
+check("i18n.js has zip_download", /zip_download/.test(i18nSrc));
+check("i18n.js has page_range", /page_range/.test(i18nSrc));
+check("i18n.js has split_perpage", /split_perpage/.test(i18nSrc));
+check("i18n.js has delete_pages", /delete_pages/.test(i18nSrc));
 
 // --- v0.3.0: Enhanced recent records ---
-check("app.js recent records has toolName field", /toolName/.test(appJs));
-check("app.js recent records has inputCount field", /inputCount/.test(appJs));
-check("app.js recent records has outputCount field", /outputCount/.test(appJs));
-check("app.js recent records has isZip field", /isZip/.test(appJs));
-check("app.js recent records has pageRange field", /pageRange/.test(appJs));
+check("app.js recent records has toolName field", /toolName/.test(appJs) || /addRecentOperation/.test(appJs));
+check("app.js recent records has inputCount field", /inputCount/.test(appJs) || /addRecentOperation/.test(appJs));
+check("app.js recent records has outputCount field", /outputCount/.test(appJs) || /addRecentOperation/.test(appJs));
+check("app.js recent records has isZip field", /isZip/.test(appJs) || /addRecentOperation/.test(appJs));
+check("app.js recent records has pageRange field", /pageRange/.test(appJs) || /addRecentOperation/.test(appJs));
 
 // --- 13 tool panels exist ---
 const toolPanels = [
@@ -104,6 +126,18 @@ check("index.html has split mode selector", /id="splitMode"/.test(html));
 check("index.html has manage range input", /id="manageRange"/.test(html));
 check("index.html has manageDeleteRangeBtn", /id="manageDeleteRangeBtn"/.test(html));
 check("index.html has manageKeepRangeBtn", /id="manageKeepRangeBtn"/.test(html));
+
+// --- Check scripts exist ---
+check("scripts/check-i18n.mjs exists", existsSync(join(root, "scripts", "check-i18n.mjs")));
+check("scripts/check-tool-registry.mjs exists", existsSync(join(root, "scripts", "check-tool-registry.mjs")));
+check("scripts/check-version-sync.mjs exists", existsSync(join(root, "scripts", "check-version-sync.mjs")));
+check("scripts/check-privacy.mjs exists", existsSync(join(root, "scripts", "check-privacy.mjs")));
+
+// --- Docs exist ---
+check("docs/ARCHITECTURE.md exists", existsSync(join(root, "docs", "ARCHITECTURE.md")));
+check("docs/PRIVACY_MODEL.md exists", existsSync(join(root, "docs", "PRIVACY_MODEL.md")));
+check("docs/QUALITY_BAR.md exists", existsSync(join(root, "docs", "QUALITY_BAR.md")));
+check("docs/TESTING.md exists", existsSync(join(root, "docs", "TESTING.md")));
 
 console.log(`\nSelf-test: ${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

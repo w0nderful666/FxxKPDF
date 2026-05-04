@@ -3,7 +3,21 @@
 Local-first, privacy-first PDF toolkit. All processing happens in your browser — no upload, no backend, no tracking.
 
 🔗 **Online Demo:** <https://w0nderful666.github.io/FxxKPDF/>
-📌 **Current Version:** v0.3.0
+📌 **Current Version:** v0.3.1
+
+## What's New in v0.3.1
+
+- 🏗️ **Vanilla Architecture Standardization** — Modular JS structure with 7 focused modules
+- 📋 **siteMeta** — Single source of truth for project metadata (version, URLs, storage keys)
+- 📦 **toolRegistry** — Central registry for all 13 PDF tools with metadata
+- 🌐 **i18n** — Centralized translation management delegated to dedicated module
+- 💾 **storage** — Unified localStorage wrapper with error handling
+- 🔢 **rangeParser** — Page range parsing module with i18n error messages
+- 📁 **zipUtils** — ZIP file creation and download utilities
+- 🧰 **fileUtils** — Common file and UI utility functions
+- ✅ **4 New Check Scripts** — i18n, tool registry, version sync, privacy validation
+- 📚 **4 New Docs** — Architecture, Privacy Model, Quality Bar, Testing guide
+- 🔒 **Zero functional changes** — All 13 tools and v0.3.0 features preserved
 
 ## What's New in v0.3.0
 
@@ -123,20 +137,37 @@ python -m http.server 8080
 ```
 FxxKPDF/
 ├── index.html          # Main page with all tool panels
-├── app.js              # All PDF tool logic + i18n + settings
+├── app.js              # All PDF tool logic (delegates to js/ modules)
 ├── styles.css          # All styling (light + dark mode)
 ├── qpdf-utils.js       # QPDF WebAssembly adapter
 ├── self-test.html      # Browser-based self-test page
+├── js/                 # Modular JS (v0.3.1)
+│   ├── siteMeta.js     # Project metadata (version, URLs, keys)
+│   ├── i18n.js         # Translation management (zh/en)
+│   ├── storage.js      # localStorage wrapper
+│   ├── toolRegistry.js # Tool registry (13 stable + 3 roadmap)
+│   ├── rangeParser.js  # Page range parsing
+│   ├── zipUtils.js     # ZIP download utilities
+│   └── fileUtils.js    # Common UI/file utilities
 ├── libs/               # Vendored dependencies
 │   ├── pdf-lib/
 │   ├── pdfjs/
 │   ├── sortable/
 │   ├── jszip/
 │   └── qpdf-wasm/
+├── docs/               # Documentation (v0.3.1)
+│   ├── ARCHITECTURE.md # Module structure and design decisions
+│   ├── PRIVACY_MODEL.md # Privacy guarantees
+│   ├── QUALITY_BAR.md  # Quality standards
+│   └── TESTING.md      # Test scripts and release checklist
 ├── scripts/
 │   ├── build.mjs       # Build script (copies to dist/)
 │   ├── run-self-test.mjs  # Node.js self-test
 │   ├── preflight.mjs   # Pre-deploy checks
+│   ├── check-i18n.mjs  # i18n key alignment check
+│   ├── check-tool-registry.mjs  # Tool registry check
+│   ├── check-version-sync.mjs   # Version sync check
+│   ├── check-privacy.mjs        # Privacy validation
 │   ├── vendor-libs.mjs # Download vendored libs
 │   └── vendor-qpdf.mjs # Download QPDF WASM
 ├── .github/workflows/
@@ -153,6 +184,15 @@ FxxKPDF/
 npm run build        # Copy files to dist/
 npm run self-test    # Run structural checks
 npm run preflight    # Run pre-deploy validation
+
+# v0.3.1: Additional checks
+npm run check:i18n   # i18n key alignment (zh ↔ en)
+npm run check:tools  # Tool registry completeness (13 tools)
+npm run check:version # Version consistency across files
+npm run check:privacy # Privacy validation (no upload/exfiltration)
+
+# Full test suite
+npm test             # build + self-test + preflight
 ```
 
 ## Roadmap
@@ -162,6 +202,13 @@ npm run preflight    # Run pre-deploy validation
 - 🖊️ Batch Watermark
 - 📄 PDF/A Conversion
 - 📊 PDF Form Filling
+
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md) — Module structure, design decisions, vanilla JS rationale
+- [Privacy Model](docs/PRIVACY_MODEL.md) — File handling, localStorage usage, CSP policy
+- [Quality Bar](docs/QUALITY_BAR.md) — Quality standards, tool status boundaries
+- [Testing](docs/TESTING.md) — All test scripts, pre-release checklist
 
 ## License
 

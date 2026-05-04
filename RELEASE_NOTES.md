@@ -1,5 +1,34 @@
 # Release Notes
 
+## v0.3.1
+
+Architecture standardization release: modular JS structure, centralized metadata, enhanced testing and documentation (May 2026).
+
+Added:
+- **siteMeta** (`js/siteMeta.js`): Single source of truth for project metadata — version, URLs, storage keys
+- **toolRegistry** (`js/toolRegistry.js`): Central registry for all 13 stable tools + 3 roadmap tools, with `getLegacyArray()` for backward compatibility
+- **i18n module** (`js/i18n.js`): Centralized translation management delegated from inline app.js code
+- **storage module** (`js/storage.js`): Unified localStorage wrapper with error handling, settings, recent operations
+- **rangeParser module** (`js/rangeParser.js`): Page range parsing with i18n error messages, all/odd/even support
+- **zipUtils module** (`js/zipUtils.js`): ZIP file creation and download utilities
+- **fileUtils module** (`js/fileUtils.js`): Common UI and file utility functions (escapeHTML, formatSize, showAlert, etc.)
+- **4 check scripts**: `check:i18n`, `check:tools`, `check:version`, `check:privacy`
+- **4 documentation files**: `docs/ARCHITECTURE.md`, `docs/PRIVACY_MODEL.md`, `docs/QUALITY_BAR.md`, `docs/TESTING.md`
+- `npm test` command runs full test suite (build + self-test + preflight)
+- Build script now copies `js/` and `docs/` to `dist/`
+
+Changed:
+- `app.js` delegates to `window.i18n`, `window.storage`, `window.rangeParser`, `window.zipUtils`, `window.toolRegistry`, `window.siteMeta`
+- Tool list now loaded from `window.toolRegistry.getLegacyArray()` instead of inline array
+- Version bumped to v0.3.1 across package.json, siteMeta.js, index.html, README, RELEASE_NOTES
+
+Preserved:
+- All 13 PDF tools unchanged in functionality
+- All v0.3.0 features (ZIP download, enhanced page range parser, split/extract improvements) intact
+- All existing i18n keys preserved
+- No breaking changes — app.js retains same function signatures
+- Vanilla JS architecture maintained (no React, no TypeScript, no Vite)
+
 ## v0.3.0
 
 Feature release: Batch ZIP download, enhanced page range parser, split/extract improvements (May 2026).
