@@ -1,4 +1,4 @@
-/* global PDFLib, pdfjsLib, Sortable */
+/* global PDFLib, pdfjsLib, Sortable, JSZip */
 
 // ==================== i18n System ====================
 const I18N = {
@@ -107,7 +107,34 @@ const I18N = {
     success_image_pdf: "图片 PDF 生成完成。",
     settings_imported: "设置已导入。",
     settings_import_fail: "导入失败：文件格式不正确。",
-    tool_cleared: "已清空当前工具。"
+    tool_cleared: "已清空当前工具。",
+    // v0.3.0 additions
+    zip_download: "下载全部 ZIP",
+    zip_generating: "ZIP 生成中...",
+    zip_download_failed: "ZIP 下载失败",
+    zip_ready: "ZIP 文件已生成，可以下载。",
+    page_range: "页面范围",
+    page_range_all: "all = 全部页面",
+    page_range_odd: "odd = 奇数页",
+    page_range_even: "even = 偶数页",
+    page_range_example: "示例：1-3,5,7-9",
+    invalid_page_number: "非法页码",
+    page_out_of_range: "页码超出范围",
+    output_count: "输出数量",
+    page_selection_summary: "页面选择摘要",
+    split_perpage: "每页拆分为单独 PDF",
+    split_extract_single: "按页面范围提取为一个 PDF",
+    split_extract_multi: "按页面范围拆成多个 PDF",
+    delete_pages: "删除指定页面",
+    extract_pages: "提取指定页面",
+    keep_pages: "保留指定页面",
+    manage_range_selected: "已选择页面",
+    manage_range_deleted: "已删除指定页面",
+    manage_range_kept: "已保留指定页面",
+    split_mode_perpage: "每页拆分为单独 PDF",
+    split_mode_extract: "按页面范围提取为一个 PDF",
+    split_mode_ranges: "按页面范围拆成多个 PDF",
+    estimated_output: "预计输出"
   },
   en: {
     hero_eyebrow: "Privacy-first PDF Toolkit",
@@ -214,7 +241,34 @@ const I18N = {
     success_image_pdf: "Image PDF generated.",
     settings_imported: "Settings imported.",
     settings_import_fail: "Import failed: invalid file format.",
-    tool_cleared: "Current tool cleared."
+    tool_cleared: "Current tool cleared.",
+    // v0.3.0 additions
+    zip_download: "Download all as ZIP",
+    zip_generating: "Generating ZIP...",
+    zip_download_failed: "ZIP download failed",
+    zip_ready: "ZIP file is ready to download.",
+    page_range: "Page Range",
+    page_range_all: "all = all pages",
+    page_range_odd: "odd = odd pages",
+    page_range_even: "even = even pages",
+    page_range_example: "Example: 1-3,5,7-9",
+    invalid_page_number: "Invalid page number",
+    page_out_of_range: "Page number out of range",
+    output_count: "Output count",
+    page_selection_summary: "Page selection summary",
+    split_perpage: "Split each page into a separate PDF",
+    split_extract_single: "Extract page range as a single PDF",
+    split_extract_multi: "Split page range into multiple PDFs",
+    delete_pages: "Delete specified pages",
+    extract_pages: "Extract specified pages",
+    keep_pages: "Keep specified pages",
+    manage_range_selected: "Pages selected",
+    manage_range_deleted: "Specified pages deleted",
+    manage_range_kept: "Specified pages kept",
+    split_mode_perpage: "Split each page into a separate PDF",
+    split_mode_extract: "Extract page range as a single PDF",
+    split_mode_ranges: "Split page range into multiple PDFs",
+    estimated_output: "Estimated output"
   }
 };
 
@@ -297,22 +351,28 @@ function loadSettingsFromURL() {
   }
 }
 
-function addRecentOperation(tool, filename, outputSize) {
+function addRecentOperation(tool, filename, outputSize, extra = {}) {
   const settings = getSettings();
   const recent = settings.recent || [];
+  const toolMeta = tools.find((t) => t[0] === tool);
   recent.unshift({
     tool,
+    toolName: toolMeta ? t(toolMeta[1]) : tool,
     filename: filename || "document.pdf",
     timestamp: Date.now(),
-    outputSize: outputSize || 0
+    outputSize: outputSize || 0,
+    inputCount: extra.inputCount || 1,
+    outputCount: extra.outputCount || 1,
+    isZip: extra.isZip || false,
+    pageRange: extra.pageRange || ""
   });
-  // Keep only last 5
-  saveSettings({ recent: recent.slice(0, 5) });
+  // Keep only last 10
+  saveSettings({ recent: recent.slice(0, 10) });
 }
 
 function exportSettings() {
   const settings = getSettings();
-  settings.version = "0.2.1";
+  settings.version = "0.3.0";
   const blob = new Blob([JSON.stringify(settings, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -614,6 +674,117 @@ function parsePageRangeDetailed(input, total) {
 function summarizePages(numbers) {
   const head = numbers.slice(0, 12).join(", ");
   return `将处理 ${numbers.length} 页：${head}${numbers.length > 12 ? "..." : ""}`;
+}
+
+// ==================== v0.3.0: Enhanced Page Range Parser ====================
+function parsePageRanges(input, totalPages) {
+  const text = input.trim().toLowerCase();
+  if (!text) throw new Error(currentLang === "zh" ? "请输入页面范围。" : "Please enter a page range.");
+  // Handle keywords
+  if (text === "all") {
+    return { indexes: Array.from({ length: totalPages }, (_, i) => i), numbers: Array.from({ length: totalPages }, (_, i) => i + 1) };
+  }
+  if (text === "odd") {
+    const numbers = Array.from({ length: totalPages }, (_, i) => i + 1).filter((n) => n % 2 === 1);
+    return { indexes: numbers.map((n) => n - 1), numbers };
+  }
+  if (text === "even") {
+    const numbers = Array.from({ length: totalPages }, (_, i) => i + 1).filter((n) => n % 2 === 0);
+    return { indexes: numbers.map((n) => n - 1), numbers };
+  }
+  // Parse ranges
+  const pages = [];
+  for (const part of text.split(",")) {
+    const token = part.trim();
+    if (!token) continue;
+    if (/^\d+$/.test(token)) {
+      pages.push(Number(token));
+    } else if (/^\d+\s*-\s*\d+$/.test(token)) {
+      const [start, end] = token.split("-").map((v) => Number(v.trim()));
+      if (start > end) throw new Error(currentLang === "zh" ? `页码范围 ${token} 的起始页不能大于结束页。` : `Range ${token}: start cannot be greater than end.`);
+      for (let i = start; i <= end; i += 1) pages.push(i);
+    } else {
+      throw new Error(currentLang === "zh" ? `无法识别页面范围：${token}` : `Cannot parse page range: ${token}`);
+    }
+  }
+  const unique = [...new Set(pages)];
+  const bad = unique.find((page) => page < 1 || page > totalPages);
+  if (bad) {
+    throw new Error(currentLang === "zh"
+      ? `页码 ${bad} 超出范围。当前 PDF 共 ${totalPages} 页。`
+      : `Page ${bad} is out of range. This PDF has ${totalPages} pages.`);
+  }
+  if (unique.length === 0) throw new Error(currentLang === "zh" ? "未选择任何页面。" : "No pages selected.");
+  return { indexes: unique.map((page) => page - 1), numbers: unique };
+}
+
+// ==================== v0.3.0: ZIP Download Utilities ====================
+function getZipFileName() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `FxxKPDF-results-${y}-${m}-${d}.zip`;
+}
+
+async function downloadAsZip(files, baseName) {
+  // files: [{name: string, data: Uint8Array}]
+  if (!files.length) return;
+  if (typeof JSZip === "undefined") throw new Error(currentLang === "zh" ? "JSZip 库未加载，无法生成 ZIP。" : "JSZip library not loaded.");
+  const zip = new JSZip();
+  for (const file of files) {
+    zip.file(file.name, file.data);
+  }
+  const content = await zip.generateAsync({ type: "blob" });
+  const url = URL.createObjectURL(content);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = baseName || getZipFileName();
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function showZipResult(toolId, files, zipFileName) {
+  const resultId = {
+    imagewatermark: "imageWatermark",
+    textwatermark: "textWatermark",
+    imagepdf: "imagePdf"
+  }[toolId] || toolId;
+  const result = $(`#${resultId}Result`);
+  if (!result) return;
+  const totalSize = files.reduce((sum, f) => sum + f.data.length, 0);
+  result.innerHTML = `
+    <strong>${t("success_split")}</strong>
+    <p>${t("output_count")}：${files.length} 个文件 · ${formatSize(totalSize)}</p>
+    <div class="file-list-summary">${files.map((f) => escapeHTML(f.name)).join(", ")}</div>
+    <div class="button-row">
+      <button class="primary-btn zip-download-btn" type="button" data-zip-tool="${toolId}">${t("zip_download")}</button>
+      <button class="ghost-btn" type="button" data-result-clear="${toolId}">${currentLang === "zh" ? "再处理一个文件 / 清空" : "Process another / Clear"}</button>
+    </div>
+  `;
+  result.classList.remove("hidden");
+  result.querySelector("[data-result-clear]").addEventListener("click", () => clearTool(toolId));
+  const zipBtn = result.querySelector(".zip-download-btn");
+  let zipBusy = false;
+  zipBtn.addEventListener("click", async () => {
+    if (zipBusy) return;
+    zipBusy = true;
+    zipBtn.disabled = true;
+    zipBtn.textContent = t("zip_generating");
+    try {
+      await downloadAsZip(files, zipFileName || getZipFileName());
+      showAlert(t("zip_ready"));
+      addRecentOperation(toolId, zipFileName || getZipFileName(), totalSize, { outputCount: files.length, isZip: true });
+    } catch (error) {
+      showAlert(t("zip_download_failed") + "：" + (error.message || error), "error");
+    } finally {
+      zipBusy = false;
+      zipBtn.disabled = false;
+      zipBtn.textContent = t("zip_download");
+    }
+  });
+  result.scrollIntoView({ behavior: "smooth", block: "center" });
+  addRecentOperation(toolId, zipFileName || getZipFileName(), totalSize, { outputCount: files.length, isZip: true });
 }
 
 async function getPdfJsDocument(file) {
@@ -1168,6 +1339,7 @@ async function initMerge() {
       const bytes = await out.save();
       showResult("merge", $("#mergeDownload"), bytes, buildOutputName(state.merge.files[0], "merged"), `${out.getPageCount()} 页`);
       showAlert("合并完成，可以下载了。");
+      addRecentOperation("merge", buildOutputName(state.merge.files[0], "merged"), bytes.length, { inputCount: state.merge.files.length, outputCount: 1 });
     } catch (error) {
       showAlert(friendlyError(error), "error");
     } finally {
@@ -1180,25 +1352,47 @@ async function initSplit() {
   const validate = () => {
     const help = $("#splitRangeHelp");
     const summary = $("#splitSummary");
+    const mode = $("#splitMode").value;
     help.className = "field-help";
     if (!state.split.file || !state.split.pageCount) {
-      summary.textContent = "上传 PDF 后可预览和选择页码。";
+      summary.textContent = currentLang === "zh" ? "上传 PDF 后可预览和选择页码。" : "Upload a PDF to preview and select pages.";
       help.textContent = "";
       return null;
     }
+    if (mode === "perpage") {
+      summary.textContent = currentLang === "zh"
+        ? `预计输出 ${state.split.pageCount} 个文件，每页一个 PDF。`
+        : `Estimated output: ${state.split.pageCount} files, one PDF per page.`;
+      help.textContent = "";
+      return { indexes: Array.from({ length: state.split.pageCount }, (_, i) => i), numbers: Array.from({ length: state.split.pageCount }, (_, i) => i + 1), mode: "perpage" };
+    }
     try {
-      const parsed = parsePageRangeDetailed($("#splitRange").value, state.split.pageCount);
-      help.textContent = parsed.duplicateCount ? `已自动去重 ${parsed.duplicateCount} 个重复页码。` : "页码范围可用。";
-      if (parsed.duplicateCount) help.classList.add("warn");
-      summary.textContent = summarizePages(parsed.numbers);
-      return parsed;
+      const parsed = parsePageRanges($("#splitRange").value, state.split.pageCount);
+      help.textContent = "";
+      if (mode === "ranges") {
+        summary.textContent = currentLang === "zh"
+          ? `预计输出 ${parsed.numbers.length} 个文件，每页一个 PDF。`
+          : `Estimated output: ${parsed.numbers.length} files, one PDF per page.`;
+      } else {
+        summary.textContent = summarizePages(parsed.numbers);
+      }
+      return { ...parsed, mode };
     } catch (error) {
       help.textContent = error.message;
       help.classList.add("error");
-      summary.textContent = `当前 PDF 共 ${state.split.pageCount || 0} 页。`;
+      summary.textContent = currentLang === "zh"
+        ? `当前 PDF 共 ${state.split.pageCount || 0} 页。`
+        : `This PDF has ${state.split.pageCount || 0} pages.`;
       return null;
     }
   };
+  // Mode change
+  $("#splitMode").addEventListener("change", () => {
+    const mode = $("#splitMode").value;
+    $("#splitRangeField").classList.toggle("hidden", mode === "perpage");
+    $("#splitPresets").classList.toggle("hidden", mode === "perpage");
+    validate();
+  });
   $("#splitFile").addEventListener("change", async (event) => {
     handleNewInput("split");
     const file = event.target.files[0];
@@ -1214,15 +1408,15 @@ async function initSplit() {
   $("#splitRange").addEventListener("input", validate);
   $$("[data-split-preset]").forEach((button) => button.addEventListener("click", () => {
     if (!state.split.pageCount) {
-      showAlert("请先上传一个 PDF。", "warn");
+      showAlert(currentLang === "zh" ? "请先上传一个 PDF。" : "Please upload a PDF first.", "warn");
       return;
     }
     const total = state.split.pageCount;
     const preset = button.dataset.splitPreset;
     const values = {
-      all: `1-${total}`,
-      odd: Array.from({ length: total }, (_, i) => i + 1).filter((n) => n % 2 === 1).join(","),
-      even: Array.from({ length: total }, (_, i) => i + 1).filter((n) => n % 2 === 0).join(","),
+      all: "all",
+      odd: "odd",
+      even: "even",
       first5: `1-${Math.min(5, total)}`,
       last5: `${Math.max(1, total - 4)}-${total}`
     };
@@ -1232,13 +1426,29 @@ async function initSplit() {
   $("#splitBtn").addEventListener("click", async (event) => {
     const btn = event.currentTarget;
     try {
-      if (!state.split.file) throw new Error("请先上传一个 PDF。");
+      if (!state.split.file) throw new Error(currentLang === "zh" ? "请先上传一个 PDF。" : "Please upload a PDF first.");
       const parsed = validate();
-      if (!parsed) throw new Error("请先修正页码范围。");
-      setBusy(btn, true, "正在生成...");
-      const bytes = await copySelectedPages(state.split.file, parsed.indexes);
-      showResult("split", $("#splitDownload"), bytes, buildOutputName(state.split.file, "extracted"), `${parsed.indexes.length} 页`);
-      showAlert("提取完成，可以下载了。");
+      if (!parsed) throw new Error(currentLang === "zh" ? "请先修正页面范围。" : "Please fix the page range first.");
+      setBusy(btn, true, currentLang === "zh" ? "正在生成..." : "Generating...");
+      const mode = parsed.mode;
+      if (mode === "perpage" || mode === "ranges") {
+        // Multiple output files → ZIP
+        const files = [];
+        for (let i = 0; i < parsed.indexes.length; i += 1) {
+          const pageIdx = parsed.indexes[i];
+          const pageName = `split-page-${parsed.numbers[i]}.pdf`;
+          const bytes = await copySelectedPages(state.split.file, [pageIdx]);
+          files.push({ name: pageName, data: bytes });
+        }
+        showZipResult("split", files);
+        showAlert(currentLang === "zh" ? `拆分完成，共 ${files.length} 个文件。` : `Split complete, ${files.length} files.`);
+      } else {
+        // Single output file
+        const bytes = await copySelectedPages(state.split.file, parsed.indexes);
+        showResult("split", $("#splitDownload"), bytes, buildOutputName(state.split.file, "extracted"), `${parsed.indexes.length} 页`);
+        showAlert(t("success_split"));
+        addRecentOperation("split", buildOutputName(state.split.file, "extracted"), bytes.length, { inputCount: 1, outputCount: 1, pageRange: $("#splitRange").value });
+      }
     } catch (error) {
       showAlert(friendlyError(error), "error");
     } finally {
@@ -1289,6 +1499,51 @@ async function initManage() {
     };
     if (count >= 5) showConfirm(`你将删除 ${count} 页。此操作只影响当前工作区，导出前不会修改原文件。`, run);
     else run();
+  });
+  // v0.3.0: Range-based delete
+  $("#manageDeleteRangeBtn").addEventListener("click", () => {
+    if (!state.manage.file || !state.manage.pageCount) {
+      showAlert(currentLang === "zh" ? "请先上传一个 PDF。" : "Please upload a PDF first.", "warn");
+      return;
+    }
+    try {
+      const parsed = parsePageRanges($("#manageRange").value, state.manage.pageCount);
+      const count = parsed.numbers.length;
+      const run = () => {
+        const deleteSet = new Set(parsed.indexes);
+        state.manage.pages = state.manage.pages.filter((p) => !deleteSet.has(p.index));
+        state.manage.selected.clear();
+        renderManagePages();
+        showAlert(currentLang === "zh"
+          ? `${t("manage_range_deleted")}：${parsed.numbers.join(", ")}`
+          : `${t("manage_range_deleted")}: ${parsed.numbers.join(", ")}`);
+      };
+      if (count >= 5) showConfirm(currentLang === "zh"
+        ? `你将删除 ${count} 页（${parsed.numbers.slice(0, 8).join(", ")}${count > 8 ? "..." : ""}）。此操作只影响当前工作区。`
+        : `You will delete ${count} pages (${parsed.numbers.slice(0, 8).join(", ")}${count > 8 ? "..." : ""}). This only affects the workspace.`, run);
+      else run();
+    } catch (error) {
+      showAlert(error.message, "error");
+    }
+  });
+  // v0.3.0: Range-based keep (keep only specified pages)
+  $("#manageKeepRangeBtn").addEventListener("click", () => {
+    if (!state.manage.file || !state.manage.pageCount) {
+      showAlert(currentLang === "zh" ? "请先上传一个 PDF。" : "Please upload a PDF first.", "warn");
+      return;
+    }
+    try {
+      const parsed = parsePageRanges($("#manageRange").value, state.manage.pageCount);
+      const keepSet = new Set(parsed.indexes);
+      state.manage.pages = state.manage.pages.filter((p) => keepSet.has(p.index));
+      state.manage.selected.clear();
+      renderManagePages();
+      showAlert(currentLang === "zh"
+        ? `${t("manage_range_kept")}：${parsed.numbers.join(", ")}`
+        : `${t("manage_range_kept")}: ${parsed.numbers.join(", ")}`);
+    } catch (error) {
+      showAlert(error.message, "error");
+    }
   });
   $("#manageLeftBtn").addEventListener("click", () => rotateSelected(-90));
   $("#manageRightBtn").addEventListener("click", () => rotateSelected(90));

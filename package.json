@@ -1,6 +1,6 @@
 {
   "name": "fxxkpdf",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Local-first, privacy-first PDF toolkit. All processing happens in your browser — no upload, no backend.",
   "private": true,
   "license": "MIT",

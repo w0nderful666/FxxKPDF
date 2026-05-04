@@ -46,7 +46,7 @@
             <span data-i18n="pill_no_backend">No Backend</span>
             <span data-i18n="pill_ghpages">GitHub Pages Ready</span>
           </div>
-          <div class="version-badge" data-testid="version-badge">v0.2.1</div>
+          <div class="version-badge" data-testid="version-badge">v0.3.0</div>
         </div>
         <div class="hero-panel" aria-label="隐私提示">
           <div class="status-dot"></div>
@@ -141,21 +141,28 @@
         <section class="tool-panel" id="panel-split" data-tool="split">
           <div class="panel-grid">
             <div class="control-card">
-              <h3>提取页面</h3>
+              <h3>拆分 / 提取页面</h3>
               <label class="dropzone">
                 <input id="splitFile" type="file" accept="application/pdf" />
                 <span>选择一个 PDF</span>
-                <small>支持 1-3、1,3,5、2-4,8,10</small>
+                <small>支持 1-3、1,3,5、2-4,8,10、all、odd、even</small>
               </label>
               <div class="file-meta" id="splitMeta"></div>
-              <label class="field">页码范围
-                <input id="splitRange" type="text" placeholder="例如：1-3,8,10" />
-                <small class="field-help" id="splitRangeHelp"></small>
+              <label class="field">拆分模式
+                <select id="splitMode">
+                  <option value="extract">按页面范围提取为一个 PDF</option>
+                  <option value="perpage">每页拆分为单独 PDF</option>
+                  <option value="ranges">按页面范围拆成多个 PDF</option>
+                </select>
               </label>
-              <div class="button-row wrap compact-actions">
-                <button class="ghost-btn" data-split-preset="all" type="button">全部页面</button>
-                <button class="ghost-btn" data-split-preset="odd" type="button">奇数页</button>
-                <button class="ghost-btn" data-split-preset="even" type="button">偶数页</button>
+              <label class="field" id="splitRangeField">页面范围
+                <input id="splitRange" type="text" placeholder="例如：1-3,8,10 或 all / odd / even" />
+                <small class="field-help" id="splitRangeHelp">支持：1-3 | 1,3,5 | 1,3,5-8,10 | all | odd | even</small>
+              </label>
+              <div class="button-row wrap compact-actions" id="splitPresets">
+                <button class="ghost-btn" data-split-preset="all" type="button">全部 all</button>
+                <button class="ghost-btn" data-split-preset="odd" type="button">奇数 odd</button>
+                <button class="ghost-btn" data-split-preset="even" type="button">偶数 even</button>
                 <button class="ghost-btn" data-split-preset="first5" type="button">前 5 页</button>
                 <button class="ghost-btn" data-split-preset="last5" type="button">后 5 页</button>
               </div>
@@ -184,6 +191,10 @@
             </label>
             <div class="file-meta" id="manageMeta"></div>
             <div class="mini-summary" id="manageSummary">上传 PDF 后可选择、排序、删除和旋转页面。</div>
+            <label class="field">按页面范围操作
+              <input id="manageRange" type="text" placeholder="例如：1-3,8,10 或 all / odd / even" />
+              <small class="field-help" id="manageRangeHelp">支持：1-3 | 1,3,5 | all | odd | even，用于下方删除/提取/保留操作</small>
+            </label>
             <div class="button-row wrap">
               <button class="ghost-btn" id="manageSelectAllBtn" type="button">全选</button>
               <button class="ghost-btn" id="manageClearSelectBtn" type="button">取消选择</button>
@@ -191,7 +202,9 @@
               <button class="ghost-btn" id="manageOddBtn" type="button">选择奇数页</button>
               <button class="ghost-btn" id="manageEvenBtn" type="button">选择偶数页</button>
               <button class="ghost-btn" id="manageDeleteBtn" type="button">删除选中</button>
+              <button class="ghost-btn" id="manageDeleteRangeBtn" type="button">删除指定页面</button>
               <button class="ghost-btn" id="manageExtractBtn" type="button">提取选中</button>
+              <button class="ghost-btn" id="manageKeepRangeBtn" type="button">保留指定页面</button>
               <button class="ghost-btn" id="manageLeftBtn" type="button">左旋转</button>
               <button class="ghost-btn" id="manageRightBtn" type="button">右旋转</button>
               <button class="primary-btn" id="manageExportBtn" type="button">导出 PDF</button>
@@ -644,7 +657,7 @@
       <div class="footer-brand">
         <strong>FxxKPDF</strong>
         <span class="footer-sep">·</span>
-        <span>v0.2.1</span>
+        <span>v0.3.0</span>
         <span class="footer-sep">·</span>
         <span data-i18n="footer_local">Local First</span>
         <span class="footer-sep">·</span>
@@ -659,6 +672,7 @@
     <script src="./libs/pdf-lib/pdf-lib.min.js"></script>
     <script src="./libs/pdfjs/pdf.min.js"></script>
     <script src="./libs/sortable/Sortable.min.js"></script>
+    <script src="./libs/jszip/jszip.min.js"></script>
     <script src="./qpdf-utils.js"></script>
     <script src="./app.js"></script>
   </body>

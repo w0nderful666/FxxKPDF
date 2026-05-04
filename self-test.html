@@ -25,6 +25,41 @@
     // Basic DOM checks
     check("document exists", true);
     check("script runs in browser", typeof window !== "undefined");
+
+    // v0.3.0 checks
+    check("JSZip is loaded", typeof window.JSZip !== "undefined");
+
+    // Check version badge
+    const badge = document.querySelector('[data-testid="version-badge"]');
+    check("version badge shows v0.3.0", badge && badge.textContent.includes("v0.3.0"));
+
+    // Check footer version
+    const footer = document.querySelector('.footer-brand');
+    check("footer shows v0.3.0", footer && footer.textContent.includes("v0.3.0"));
+
+    // Check 13 tool panels
+    const panels = [
+      "panel-merge", "panel-split", "panel-manage", "panel-number",
+      "panel-textwatermark", "panel-imagewatermark", "panel-signature",
+      "panel-annotate", "panel-permissions", "panel-normalcopy",
+      "panel-protect", "panel-metadata", "panel-imagepdf"
+    ];
+    for (const id of panels) {
+      check(`tool panel ${id} exists`, !!document.getElementById(id));
+    }
+
+    // Check split mode selector
+    check("split mode selector exists", !!document.getElementById("splitMode"));
+
+    // Check manage range input
+    check("manage range input exists", !!document.getElementById("manageRange"));
+    check("manageDeleteRangeBtn exists", !!document.getElementById("manageDeleteRangeBtn"));
+    check("manageKeepRangeBtn exists", !!document.getElementById("manageKeepRangeBtn"));
+
+    // Check JSZip script tag
+    const scripts = Array.from(document.querySelectorAll('script[src]'));
+    check("JSZip script loaded", scripts.some(s => s.src.includes("jszip")));
+
     out.firstChild.remove(); // remove "Running…"
     const summary = document.createElement("p");
     summary.innerHTML = `<strong>Browser self-test: ${pass} passed, ${fail} failed</strong>`;

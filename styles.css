@@ -769,3 +769,43 @@ h3 { margin-bottom: .9rem; font-size: 1.05rem; }
   .step-card { max-width: 100%; width: 100%; }
   .footer-brand { font-size: .85rem; }
 }
+
+/* ==================== v0.3.0 New Styles ==================== */
+
+/* File list summary in result cards */
+.file-list-summary {
+  margin: .5rem 0 .75rem;
+  padding: .65rem .75rem;
+  border: 1px solid var(--line);
+  border-radius: .7rem;
+  background: color-mix(in srgb, var(--surface-strong) 82%, transparent);
+  color: var(--muted);
+  font-size: .88rem;
+  line-height: 1.6;
+  max-height: 8rem;
+  overflow-y: auto;
+  word-break: break-all;
+}
+
+/* ZIP download button highlight */
+.zip-download-btn {
+  animation: pulse-download 1.8s ease;
+}
+
+/* Split mode select styling */
+#splitMode {
+  font-weight: 700;
+}
+
+/* Manage range input styling */
+#manageRange {
+  font-family: monospace;
+}
+
+/* Enhanced tool panel field descriptions */
+.split-mode-desc {
+  font-size: .88rem;
+  color: var(--muted);
+  margin: -.3rem 0 .6rem;
+  line-height: 1.5;
+}
