@@ -57,7 +57,57 @@ const I18N = {
     btn_protect: "生成加密 PDF",
     btn_metadata_clear: "一键清空元数据",
     btn_metadata_random: "一键随机替换",
-    btn_image_pdf: "生成 PDF"
+    btn_image_pdf: "生成 PDF",
+    tool_merge: "PDF 合并",
+    tool_merge_desc: "上传多个 PDF，拖拽排序后一键合并。",
+    tool_split: "PDF 拆分 / 提取页面",
+    tool_split_desc: "输入页码范围，导出需要的页面。",
+    tool_manage: "页面管理",
+    tool_manage_desc: "排序、删除、提取、旋转页面。",
+    tool_number: "添加页码",
+    tool_number_desc: "选择位置、字号和页码格式。",
+    tool_textwatermark: "添加文字水印",
+    tool_textwatermark_desc: "中文水印通过 Canvas 图片嵌入。",
+    tool_imagewatermark: "添加图片水印",
+    tool_imagewatermark_desc: "添加 PNG / JPG 水印并调节透明度。",
+    tool_signature: "签名 / 盖章",
+    tool_signature_desc: "上传签名图或手写签名后放置。",
+    tool_annotate: "添加文字 / 形状 / 图片",
+    tool_annotate_desc: "用清晰参数添加简单标注。",
+    tool_permissions: "PDF 权限检测",
+    tool_permissions_desc: "查看加密、打印、复制、编辑、注释、表单和签名权限。",
+    tool_normalcopy: "生成普通副本",
+    tool_normalcopy_desc: "将你有权处理的受限 PDF 重新保存为普通副本。",
+    tool_protect: "PDF 加密码",
+    tool_protect_desc: "给你拥有权利的 PDF 添加打开密码和基础权限设置。",
+    tool_metadata: "PDF 元数据清理",
+    tool_metadata_desc: "查看、清空或随机替换 PDF 文件属性中的隐私信息。",
+    tool_imagepdf: "JPG / PNG 转 PDF",
+    tool_imagepdf_desc: "多图排序后生成 PDF。",
+    err_no_file: "请先上传一个 PDF。",
+    err_no_images: "请先上传 JPG 或 PNG 图片。",
+    err_no_two_files: "请至少上传两个 PDF。",
+    err_no_selection: "请先选择要操作的页面。",
+    err_no_signature: "请上传签名图片，或在画布中手写签名。",
+    err_no_watermark_text: "请输入水印文字。",
+    err_consent_required: "请先确认这是你拥有权利或已获得授权处理的 PDF 文件。",
+    err_password_required: "请设置打开密码。",
+    err_password_mismatch: "两次输入的打开密码不一致。",
+    err_file_type_mismatch: "拖入的文件类型不符合当前工具要求。",
+    err_range_required: "请先修正页码范围。",
+    err_page_out_of_range: "页码超出范围。",
+    processing: "处理中...",
+    success_merge: "合并完成，可以下载了。",
+    success_split: "提取完成，可以下载了。",
+    success_export: "导出完成，可以下载了。",
+    success_number: "页码已添加。",
+    success_watermark: "水印已添加。",
+    success_signature: "签名添加完成。",
+    success_annotate: "标注添加完成。",
+    success_image_pdf: "图片 PDF 生成完成。",
+    settings_imported: "设置已导入。",
+    settings_import_fail: "导入失败：文件格式不正确。",
+    tool_cleared: "已清空当前工具。"
   },
   en: {
     hero_eyebrow: "Privacy-first PDF Toolkit",
@@ -114,7 +164,57 @@ const I18N = {
     btn_protect: "Generate Encrypted PDF",
     btn_metadata_clear: "Clear All Metadata",
     btn_metadata_random: "Random Replace",
-    btn_image_pdf: "Generate PDF"
+    btn_image_pdf: "Generate PDF",
+    tool_merge: "PDF Merge",
+    tool_merge_desc: "Combine multiple PDFs, drag to reorder.",
+    tool_split: "PDF Split / Extract",
+    tool_split_desc: "Extract pages by range, export what you need.",
+    tool_manage: "Page Manager",
+    tool_manage_desc: "Reorder, delete, extract, rotate pages.",
+    tool_number: "Page Numbers",
+    tool_number_desc: "Add page numbers with custom position and format.",
+    tool_textwatermark: "Text Watermark",
+    tool_textwatermark_desc: "Add text watermark via Canvas image embedding.",
+    tool_imagewatermark: "Image Watermark",
+    tool_imagewatermark_desc: "Add PNG/JPG watermark with opacity control.",
+    tool_signature: "Signature / Stamp",
+    tool_signature_desc: "Upload or hand-draw signature, place on page.",
+    tool_annotate: "Annotations",
+    tool_annotate_desc: "Add text, shapes, and images with precise parameters.",
+    tool_permissions: "Permission Check",
+    tool_permissions_desc: "View encryption, print, copy, edit, form, and signature permissions.",
+    tool_normalcopy: "Normal Copy",
+    tool_normalcopy_desc: "Re-save restricted PDF as a normal copy.",
+    tool_protect: "Password Protection",
+    tool_protect_desc: "Add open password and permission settings via QPDF WASM.",
+    tool_metadata: "Metadata Cleanup",
+    tool_metadata_desc: "View, clear, or randomize PDF metadata fields.",
+    tool_imagepdf: "Image to PDF",
+    tool_imagepdf_desc: "Convert multiple JPG/PNG images to PDF.",
+    err_no_file: "Please upload a PDF first.",
+    err_no_images: "Please upload JPG or PNG images first.",
+    err_no_two_files: "Please upload at least two PDFs.",
+    err_no_selection: "Please select pages first.",
+    err_no_signature: "Please upload a signature image or draw one on the canvas.",
+    err_no_watermark_text: "Please enter watermark text.",
+    err_consent_required: "Please confirm you have the right to process this PDF.",
+    err_password_required: "Please set an open password.",
+    err_password_mismatch: "The two passwords do not match.",
+    err_file_type_mismatch: "Dropped file type is not supported by this tool.",
+    err_range_required: "Please fix the page range first.",
+    err_page_out_of_range: "Page number is out of range.",
+    processing: "Processing...",
+    success_merge: "Merge complete, ready to download.",
+    success_split: "Extraction complete, ready to download.",
+    success_export: "Export complete, ready to download.",
+    success_number: "Page numbers added.",
+    success_watermark: "Watermark added.",
+    success_signature: "Signature added.",
+    success_annotate: "Annotation added.",
+    success_image_pdf: "Image PDF generated.",
+    settings_imported: "Settings imported.",
+    settings_import_fail: "Import failed: invalid file format.",
+    tool_cleared: "Current tool cleared."
   }
 };
 
@@ -130,6 +230,19 @@ function applyI18N() {
     const text = t(key);
     if (text) el.textContent = text;
   });
+  // Re-render tool cards with current language
+  $$(".tool-card").forEach((card) => {
+    const nameKey = card.dataset.nameKey;
+    const descKey = card.dataset.descKey;
+    if (nameKey) card.querySelector("strong").textContent = t(nameKey);
+    if (descKey) card.querySelector("span").textContent = t(descKey);
+  });
+  // Update active tool title/desc
+  const meta = tools.find((tool) => tool[0] === state.active);
+  if (meta) {
+    $("#activeToolTitle").textContent = t(meta[1]);
+    $("#activeToolDesc").textContent = t(meta[2]);
+  }
   // Update langBtn text
   const langBtn = document.getElementById("langBtn");
   if (langBtn) langBtn.textContent = currentLang === "zh" ? "中文" : "EN";
@@ -199,7 +312,7 @@ function addRecentOperation(tool, filename, outputSize) {
 
 function exportSettings() {
   const settings = getSettings();
-  settings.version = "0.2.0";
+  settings.version = "0.2.1";
   const blob = new Blob([JSON.stringify(settings, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -238,19 +351,19 @@ const { PDFDocument, degrees, rgb } = PDFLib;
 pdfjsLib.GlobalWorkerOptions.workerSrc = "./libs/pdfjs/pdf.worker.min.js";
 
 const tools = [
-  ["merge", "PDF 合并", "上传多个 PDF，拖拽排序后一键合并。"],
-  ["split", "PDF 拆分 / 提取页面", "输入页码范围，导出需要的页面。"],
-  ["manage", "页面管理", "排序、删除、提取、旋转页面。"],
-  ["number", "添加页码", "选择位置、字号和页码格式。"],
-  ["textwatermark", "添加文字水印", "中文水印通过 Canvas 图片嵌入。"],
-  ["imagewatermark", "添加图片水印", "添加 PNG / JPG 水印并调节透明度。"],
-  ["signature", "签名 / 盖章", "上传签名图或手写签名后放置。"],
-  ["annotate", "添加文字 / 形状 / 图片", "用清晰参数添加简单标注。"],
-  ["permissions", "PDF 权限检测", "查看加密、打印、复制、编辑、注释、表单和签名权限。"],
-  ["normalcopy", "生成普通副本", "将你有权处理的受限 PDF 重新保存为普通副本。"],
-  ["protect", "PDF 加密码", "给你拥有权利的 PDF 添加打开密码和基础权限设置。"],
-  ["metadata", "PDF 元数据清理", "查看、清空或随机替换 PDF 文件属性中的隐私信息。"],
-  ["imagepdf", "JPG / PNG 转 PDF", "多图排序后生成 PDF。"]
+  ["merge", "tool_merge", "tool_merge_desc"],
+  ["split", "tool_split", "tool_split_desc"],
+  ["manage", "tool_manage", "tool_manage_desc"],
+  ["number", "tool_number", "tool_number_desc"],
+  ["textwatermark", "tool_textwatermark", "tool_textwatermark_desc"],
+  ["imagewatermark", "tool_imagewatermark", "tool_imagewatermark_desc"],
+  ["signature", "tool_signature", "tool_signature_desc"],
+  ["annotate", "tool_annotate", "tool_annotate_desc"],
+  ["permissions", "tool_permissions", "tool_permissions_desc"],
+  ["normalcopy", "tool_normalcopy", "tool_normalcopy_desc"],
+  ["protect", "tool_protect", "tool_protect_desc"],
+  ["metadata", "tool_metadata", "tool_metadata_desc"],
+  ["imagepdf", "tool_imagepdf", "tool_imagepdf_desc"]
 ];
 
 const state = {
@@ -951,12 +1064,14 @@ async function copySelectedPages(sourceFile, pageIndexes, rotations = []) {
 
 function setupTools() {
   const grid = $("#toolGrid");
-  tools.forEach(([id, title, desc]) => {
+  tools.forEach(([id, nameKey, descKey]) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `tool-card ${id === state.active ? "active" : ""}`;
     button.dataset.tool = id;
-    button.innerHTML = `<strong>${title}</strong><span>${desc}</span>`;
+    button.dataset.nameKey = nameKey;
+    button.dataset.descKey = descKey;
+    button.innerHTML = `<strong>${t(nameKey)}</strong><span>${t(descKey)}</span>`;
     button.addEventListener("click", () => activateTool(id));
     grid.appendChild(button);
   });
@@ -965,8 +1080,8 @@ function setupTools() {
 function activateTool(id) {
   state.active = id;
   const meta = tools.find((tool) => tool[0] === id);
-  $("#activeToolTitle").textContent = meta[1];
-  $("#activeToolDesc").textContent = meta[2];
+  $("#activeToolTitle").textContent = t(meta[1]);
+  $("#activeToolDesc").textContent = t(meta[2]);
   $$(".tool-card").forEach((card) => card.classList.toggle("active", card.dataset.tool === id));
   $$(".tool-panel").forEach((panel) => panel.classList.toggle("active", panel.dataset.tool === id));
   $("#workspace").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -2476,7 +2591,7 @@ function initDropzones() {
         return true;
       });
       if (!files.length) {
-        showAlert("拖入的文件类型不符合当前工具要求。", "warn");
+        showAlert(t("err_file_type_mismatch"), "warn");
         return;
       }
       const transfer = new DataTransfer();

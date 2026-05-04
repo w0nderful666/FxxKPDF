@@ -573,7 +573,7 @@ h3 { margin-bottom: .9rem; font-size: 1.05rem; }
 @media (max-width: 560px) {
   main, .footer { width: min(100% - 1rem, 1180px); }
   .topbar { padding: .75rem; }
-  .brand small, #langBtn, .mode-toggle { display: none; }
+  .brand small, .mode-toggle { display: none; }
   .tool-grid, .form-grid, .permission-grid { grid-template-columns: 1fr; }
   .button-row { align-items: stretch; flex-direction: column; }
   .button-row.wrap { flex-direction: row; }

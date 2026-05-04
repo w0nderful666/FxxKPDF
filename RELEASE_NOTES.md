@@ -1,5 +1,28 @@
 # Release Notes
 
+## v0.2.1
+
+Experience polish release (May 2026).
+
+Changed:
+- Unified all 13 tool names and descriptions into i18n system (zh/en)
+- Language toggle now visible on mobile (375px+)
+- Tool card text, active tool title/desc update on language switch
+- Error messages for missing files, wrong format, consent, password added to i18n
+- Success messages (merge, split, export, watermark, signature, etc.) added to i18n
+- Settings import/export messages added to i18n
+- Version bumped to v0.2.1 across package.json, footer, README, RELEASE_NOTES
+
+Fixed:
+- Mobile layout no longer hides language toggle button
+- Tool descriptions now translate when switching language
+- Active tool header updates on language switch
+
+Preserved:
+- All 13 PDF tools unchanged
+- All existing functionality intact
+- No breaking changes
+
 ## v0.2.0
 
 UI & Brand Upgrade release (May 2026).

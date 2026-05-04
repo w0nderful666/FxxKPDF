@@ -3,6 +3,7 @@
 Local-first, privacy-first PDF toolkit. All processing happens in your browser — no upload, no backend, no tracking.
 
 🔗 **Online Demo:** <https://w0nderful666.github.io/FxxKPDF/>
+📌 **Current Version:** v0.2.1
 
 ## Core Features
 
